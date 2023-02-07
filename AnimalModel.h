@@ -36,6 +36,8 @@ struct node
 class AnimalModel
 {
 private:
+	char* name;
+	int nameSize;
 	double* inputs;
 	int inputSize;
 	double* outputs; // Size = Outputs
