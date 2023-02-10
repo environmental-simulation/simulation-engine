@@ -47,13 +47,15 @@ private:
 public:
 	AnimalModel(int inSize, int r);
 
-	void CopyInputs(double newIn);
+	void CopyInputs(double* newIn);
 
 	void Process();
 
 	int GetRange();
 
-	int GetInSize();
+	int GetInSize(); // Returns the Input Size
+	
+	int GetLayers(); // Returns the number of layers the model was trained on
 
 	double* GetOutputs();
 };
@@ -62,17 +64,23 @@ class AnimalCell
 {
 private:
 	AnimalModel* model;
-	double lon;
-	double lat;
-	double horVector; // Horizontal vector, + for East and - for West
-	double verVector; // Vertical vector, + for North and - for South
-	int id; // Optional value for Learning Phase if using a specific pack or other ID
-	CellAction next; // next action
+	Grid* grid;
+
+	double lon;				// Cell Longitude (x-axis)
+	double lat;				// Cell Latitude (y-axis)
+	double horVector;		// Horizontal vector, + for East and - for West
+	double verVector;		// Vertical vector, + for North and - for South
+	int id;					// Optional value for Learning Phase if using a specific pack or other ID
+	CellAction next;		// next action
+
+	double GetDirectionalInput(int layer, Direction dir); // Helper function that obtains all the inputs of one dierction in a specific layer, scales them, and returns the sum
 
 public:
 	AnimalCell(AnimalModel m, double xCoord, double yCoord);
 
-	void Observe(Grid* grid); // Observes nearby squares using coordinates and grid range to inputs
+	void Observe(); // Observes nearby squares using coordinates and grid range to inputs
+
+	void Act(); // Function that inputs observed values and changes vector and next action
 
 	AnimalCell* Split();
 
