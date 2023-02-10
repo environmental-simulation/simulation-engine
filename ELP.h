@@ -3,6 +3,16 @@
 */
 #pragma once
 
+enum Direction
+{
+	north,
+	east,
+	south,
+	west,
+
+	cardinals // = 4
+};
+
 class Grid
 {
 	char* name;

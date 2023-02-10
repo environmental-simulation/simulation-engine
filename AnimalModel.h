@@ -53,7 +53,7 @@ public:
 
 	int GetRange();
 
-	int GetIntSize();
+	int GetInSize();
 
 	double* GetOutputs();
 };
@@ -66,6 +66,7 @@ private:
 	double lat;
 	double horVector; // Horizontal vector, + for East and - for West
 	double verVector; // Vertical vector, + for North and - for South
+	int id; // Optional value for Learning Phase if using a specific pack or other ID
 	CellAction next; // next action
 
 public:
