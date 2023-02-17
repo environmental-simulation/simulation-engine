@@ -6,17 +6,19 @@
 // Imports
 #import "ELP.h"
 
+const int NODE_LAYER_COUNT = 3;
+const int NODE_COUNT_PER_LAYER = 7;
+
 enum ModelOutputs
 {
-	northMag,
-	southMag,
-	westMag,
-	eastMag,
+	verticalMag,
+	horizontalMag,
 	split,
 	merge,
 	die,
+	nothing,
 
-	Outputs // = 7
+	Outputs // = 6
 };
 
 enum CellAction
@@ -29,8 +31,8 @@ enum CellAction
 
 struct node
 {
-	double weight;
-	double bias;
+	double values;
+	double bias; // todo: remove if unnecessary, maybe add a backpropagation ratio tracker
 };
 
 class AnimalModel
@@ -43,9 +45,10 @@ private:
 	double* outputs; // Size = Outputs
 	int range; // Range of "sight" for model
 	node** hNodes; // Hidden nodes, two dimensional array of nodes
+	double*** weights; // Connecting weights between each node
 
 public:
-	AnimalModel(int inSize, int r);
+	AnimalModel(char* inName, int size, int inSize, int r);
 
 	void CopyInputs(double* newIn);
 
@@ -56,6 +59,8 @@ public:
 	int GetInSize(); // Returns the Input Size
 	
 	int GetLayers(); // Returns the number of layers the model was trained on
+
+	int GetNodeCountPerLayer();
 
 	double* GetOutputs();
 };
