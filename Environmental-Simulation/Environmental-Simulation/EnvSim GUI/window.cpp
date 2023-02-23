@@ -83,7 +83,7 @@ ImVec2 SetItemDimensions(int width, int height)
 	return framePadding;
 }
 
-static int RunWindow()
+int RunWindow()
 {
 	InitGLFW();
 

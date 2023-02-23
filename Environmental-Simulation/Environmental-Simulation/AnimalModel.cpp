@@ -1,8 +1,7 @@
-#include "AnimalModel.h"
 /* Senior Project 2023 Section 1
 *  Animal model that can learn from data and react in an alternate environment
 */
-#import "AnimalModel.h"
+#include "AnimalModel.h"
 
 // Animal Model functions
 
@@ -56,32 +55,32 @@ void AnimalModel::CopyInputs(double* newIn)
 
 void AnimalModel::Process()
 {
-	for (int i = 0; i < NODE_COUNT_PER_LAYER; i++)
-	{
-		for (int j = 0; j < inputSize; j++)
-		{
-			hNodes[0][i] = weights[0][i][j] * inputs[j]);
-		}
-	}
+	//for (int i = 0; i < NODE_COUNT_PER_LAYER; i++)
+	//{
+	//	for (int j = 0; j < inputSize; j++)
+	//	{
+	//		hNodes[0][i] = weights[0][i][j] * inputs[j];
+	//	}
+	//}
 
-	for (int i = 1; i < NODE_LAYER_COUNT; i++)
-	{
-		for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
-		{
-			for (int k = 0; k < NODE_COUNT_PER_LAYER; k++)
-			{
-				hNodes[i][j] = weights[i][j][k] * hNodes[i - 1][k];
-			}
-		}
-	}
+	//for (int i = 1; i < NODE_LAYER_COUNT; i++)
+	//{
+	//	for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
+	//	{
+	//		for (int k = 0; k < NODE_COUNT_PER_LAYER; k++)
+	//		{
+	//			hNodes[i][j] = weights[i][j][k] * hNodes[i - 1][k];
+	//		}
+	//	}
+	//}
 
-	for (int i = 0; i < Outputs; i++)
-	{
-		for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
-		{
-			ModelOutputs[i] = weights[NODE_COUNT_PER_LAYER + 1][i][j] * hNodes[NODE_LAYER_COUNT][j];
-		}
-	}
+	//for (int i = 0; i < Outputs; i++)
+	//{
+	//	for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
+	//	{
+	//		ModelOutputs[i] = weights[NODE_COUNT_PER_LAYER + 1][i][j] * hNodes[NODE_LAYER_COUNT][j];
+	//	}
+	//}
 }
 
 int AnimalModel::GetRange() { return range; }
@@ -92,12 +91,12 @@ int AnimalModel::GetLayers() { return NODE_LAYER_COUNT; }
 
 int AnimalModel::GetNodeCountPerLayer() { return NODE_COUNT_PER_LAYER; }
 
-double* AnimalModel::GetOutputs() { return ModelOutputs; };
+double* AnimalModel::GetOutputs() { return outputs; };
 
 // Animal Cell functions
 
 double AnimalCell::GetDirectionalInput(int layer, Direction dir)
-{
+{/*
 	double scale = 1.0 / (model->range + 1);
 	Layer* map = grid->layers[layer];
 	double sum = 0;
@@ -177,7 +176,8 @@ double AnimalCell::GetDirectionalInput(int layer, Direction dir)
 			}
 		}
 		break;
-	}
+	}*/
+	return 0;
 }
 
 void AnimalCell::Observe()

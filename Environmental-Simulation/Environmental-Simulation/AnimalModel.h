@@ -4,7 +4,7 @@
 #pragma once
 
 // Imports
-#import "ELP.h"
+#include "ELP.h"
 
 const int NODE_LAYER_COUNT = 3;
 const int NODE_COUNT_PER_LAYER = 7;

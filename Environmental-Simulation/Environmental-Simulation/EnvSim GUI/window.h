@@ -1,8 +1,8 @@
 // Displays and runs the window for software
 
-#include"../EnvSim GUI/imgui/imgui.h"
-#include"../EnvSim GUI/imgui/imgui_impl_glfw.h"
-#include"../EnvSim GUI/imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 #include <GLFW/glfw3.h>
@@ -36,4 +36,4 @@ void Colors();
 
 ImVec2 SetItemDimensions(int width, int height);
 
-static int RunWindow();
+int RunWindow();
