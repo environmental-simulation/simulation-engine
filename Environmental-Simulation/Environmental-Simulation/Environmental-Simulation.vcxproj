@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimalModel.cpp" />
     <ClCompile Include="EnvSim GUI\glad.c" />
     <ClCompile Include="EnvSim GUI\imgui\imgui.cpp" />
     <ClCompile Include="EnvSim GUI\imgui\imgui_demo.cpp" />
@@ -29,12 +28,12 @@
     <ClCompile Include="EnvSim GUI\imgui\imgui_tables.cpp" />
     <ClCompile Include="EnvSim GUI\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EnvSim GUI\window.cpp" />
+    <ClCompile Include="LearningPhase\AnimalModel.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimalModel.h" />
-    <ClInclude Include="Display.h" />
-    <ClInclude Include="ELP.h" />
+    <ClInclude Include="EnvSim GUI\AnimalCell.h" />
+    <ClInclude Include="EnvSim GUI\Display.h" />
     <ClInclude Include="EnvSim GUI\imgui\imconfig.h" />
     <ClInclude Include="EnvSim GUI\imgui\imgui.h" />
     <ClInclude Include="EnvSim GUI\imgui\imgui_impl_glfw.h" />
@@ -45,6 +44,8 @@
     <ClInclude Include="EnvSim GUI\imgui\imstb_textedit.h" />
     <ClInclude Include="EnvSim GUI\imgui\imstb_truetype.h" />
     <ClInclude Include="EnvSim GUI\window.h" />
+    <ClInclude Include="LearningPhase\AnimalModel.h" />
+    <ClInclude Include="LearningPhase\ELP.h" />
     <ClInclude Include="Simulation.h" />
   </ItemGroup>
   <ItemGroup>

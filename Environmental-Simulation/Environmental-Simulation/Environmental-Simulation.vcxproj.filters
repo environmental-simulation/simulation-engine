@@ -22,11 +22,11 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{6e7a6d99-023f-470d-ae27-d7eabd2fbfc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\LearningPhase">
+      <UniqueIdentifier>{877d6958-8b49-4fea-a1f9-9033215f87b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimalModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,23 +57,11 @@
     <ClCompile Include="EnvSim GUI\imgui\imgui_demo.cpp">
       <Filter>Source Files\EnvSim GUI\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="LearningPhase\AnimalModel.cpp">
+      <Filter>Source Files\LearningPhase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimalModel.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Display.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ELP.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Simulation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnvSim GUI\window.h">
-      <Filter>Source Files\EnvSim GUI</Filter>
-    </ClInclude>
     <ClInclude Include="EnvSim GUI\imgui\imgui.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
@@ -100,6 +88,24 @@
     </ClInclude>
     <ClInclude Include="EnvSim GUI\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LearningPhase\AnimalModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LearningPhase\ELP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\AnimalCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\Display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\window.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
