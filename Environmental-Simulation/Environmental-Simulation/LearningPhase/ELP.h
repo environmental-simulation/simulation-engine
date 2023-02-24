@@ -15,6 +15,7 @@ enum Direction
 
 class Layer
 {
+public:
 	char* name;			// Name of the layer
 	int len;			// Length of name
 	double** layer;		// 2D array of environmental values
@@ -27,6 +28,7 @@ class Layer
 
 class Grid
 {
+public:
 	char* name;			// Name of the grid
 	int len;			// Length of name
 	Layer* layers;		// Array of layers in use

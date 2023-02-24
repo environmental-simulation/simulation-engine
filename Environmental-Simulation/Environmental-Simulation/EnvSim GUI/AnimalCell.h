@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnimalModel.h"
+#include "../LearningPhase/AnimalModel.h"
 
 class AnimalCell
 {
@@ -8,8 +8,8 @@ private:
 	AnimalModel* model;
 	Grid* grid;
 
-	double lon;				// Cell Longitude (x-axis)
-	double lat;				// Cell Latitude (y-axis)
+	int lon;				// Cell Longitude (x-axis)
+	int lat;				// Cell Latitude (y-axis)
 	double horVector;		// Horizontal vector, + for East and - for West
 	double verVector;		// Vertical vector, + for North and - for South
 	int id;					// Optional value for Learning Phase if using a specific pack or other ID

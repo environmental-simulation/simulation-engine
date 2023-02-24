@@ -60,6 +60,9 @@
     <ClCompile Include="LearningPhase\AnimalModel.cpp">
       <Filter>Source Files\LearningPhase</Filter>
     </ClCompile>
+    <ClCompile Include="EnvSim GUI\AnimalCell.cpp">
+      <Filter>Source Files\EnvSim GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EnvSim GUI\imgui\imgui.h">
