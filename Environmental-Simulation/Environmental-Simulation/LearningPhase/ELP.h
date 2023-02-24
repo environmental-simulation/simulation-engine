@@ -34,4 +34,7 @@ public:
 	Layer* layers;		// Array of layers in use
 	int xSize;			// Horizontal size
 	int ySize;			// Vertical size
+	AnimalCell** cells;	// 2D array of all the animal cells
+	int speciesCount;   // How many species are in the grid (also seen as the first dimension of the 2D array
+	int* cellCount;		// Array of cell counts per species, organized in the same order as the AnimalCell array
 };
