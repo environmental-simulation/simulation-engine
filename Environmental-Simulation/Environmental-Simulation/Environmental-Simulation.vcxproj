@@ -21,6 +21,13 @@
   <ItemGroup>
     <ClCompile Include="AnimalModel.cpp" />
     <ClCompile Include="EnvSim GUI\glad.c" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_demo.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_draw.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_tables.cpp" />
+    <ClCompile Include="EnvSim GUI\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EnvSim GUI\window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -28,6 +35,15 @@
     <ClInclude Include="AnimalModel.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="ELP.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imconfig.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imgui.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imgui_internal.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imstb_rectpack.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imstb_textedit.h" />
+    <ClInclude Include="EnvSim GUI\imgui\imstb_truetype.h" />
     <ClInclude Include="EnvSim GUI\window.h" />
     <ClInclude Include="Simulation.h" />
   </ItemGroup>
@@ -124,10 +140,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Environmental-Simulation\EnvSim GUI\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>GLFW\glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

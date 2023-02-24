@@ -16,6 +16,12 @@
     <Filter Include="Source Files\EnvSim GUI">
       <UniqueIdentifier>{2e57f7fd-1d78-456c-80b0-d7f800a98e4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EnvSim GUI\imgui">
+      <UniqueIdentifier>{ad4ad16e-cc0c-42b0-99ba-07ac28f17ced}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{6e7a6d99-023f-470d-ae27-d7eabd2fbfc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimalModel.cpp">
@@ -29,6 +35,27 @@
     </ClCompile>
     <ClCompile Include="EnvSim GUI\window.cpp">
       <Filter>Source Files\EnvSim GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_draw.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_tables.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvSim GUI\imgui\imgui_demo.cpp">
+      <Filter>Source Files\EnvSim GUI\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +73,33 @@
     </ClInclude>
     <ClInclude Include="EnvSim GUI\window.h">
       <Filter>Source Files\EnvSim GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
