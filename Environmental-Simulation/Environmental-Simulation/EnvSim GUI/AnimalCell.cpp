@@ -1,4 +1,5 @@
 
+#include "../Environment.h"
 #include "AnimalCell.h"
 
 // Animal Cell functions
@@ -12,58 +13,49 @@ double* AnimalCell::GetClosestCells()
 	minCardinals[west] = grid->xSize;
 	double* out = new double[cardinals];
 
-	for (int i = 0; i < grid->speciesCount; i++)
+	for (int j = 0; j < cellsLive; j++)
 	{
-		// Make sure it's using the proper index of the species it is
-		if (grid->cells[i, 0]->model == model)
+		if (&cells[j] != this)
 		{
-			for (int j = 0; j < grid->cellCount[i]; j++)
+			// Check if the cell is to the north in Cartesian plane coordinates
+			if (cells[j].lat > lat)
 			{
-				if (grid->cells[i, j] != this)
-				{
-					// Check if the cell is to the north in Cartesian plane coordinates
-					if (grid->cells[i, j]->lat > lat)
-					{
-						// Check if the cell is closer than the north minimum
-						if (grid->cells[i, j]->lat - lat < minCardinals[north])
-							minCardinals[north] = grid->cells[i, j]->lat - lat;
-					}
-					// Check if the cell is to the south in Cartesian plane coordinates
-					else if (grid->cells[i, j]->lat < lat)
-					{
-						// Check if the cell is closer than the south minimum
-						if (lat - grid->cells[i, j]->lat < minCardinals[south])
-							minCardinals[south] = lat - grid->cells[i, j]->lat;
-					}
-					else
-					{
-						minCardinals[north] = 0;
-						minCardinals[south] = 0;
-					}
-
-					// Check if the cell is to the east in Cartesian plane coordinates
-					if (grid->cells[i, j]->lon > lon)
-					{
-						// Check if the cell is closer than the east minimum
-						if (grid->cells[i, j]->lon - lon < minCardinals[east])
-							minCardinals[east] = grid->cells[i, j]->lon - lon;
-					}
-					// Check if the cell is to the west in Cartesian plane coordinates
-					else if (grid->cells[i, j]->lon < lon)
-					{
-						// Check if the cell is closer than the west minimum
-						if (lon - grid->cells[i, j]->lon < minCardinals[west])
-							minCardinals[west] = lon - grid->cells[i, j]->lon;
-					}
-					else
-					{
-						minCardinals[east] = 0;
-						minCardinals[west] = 0;
-					}
-				}
+				// Check if the cell is closer than the north minimum
+				if (cells[j].lat - lat < minCardinals[north])
+					minCardinals[north] = cells[j].lat - lat;
+			}
+			// Check if the cell is to the south in Cartesian plane coordinates
+			else if (cells[j].lat < lat)
+			{
+				// Check if the cell is closer than the south minimum
+				if (lat - cells[j].lat < minCardinals[south])
+					minCardinals[south] = lat - cells[j].lat;
+			}
+			else
+			{
+				minCardinals[north] = 0;
+				minCardinals[south] = 0;
 			}
 
-			break;
+			// Check if the cell is to the east in Cartesian plane coordinates
+			if (cells[j].lon > lon)
+			{
+				// Check if the cell is closer than the east minimum
+				if (cells[j].lon - lon < minCardinals[east])
+					minCardinals[east] = cells[j].lon - lon;
+			}
+			// Check if the cell is to the west in Cartesian plane coordinates
+			else if (cells[j].lon < lon)
+			{
+				// Check if the cell is closer than the west minimum
+				if (lon - cells[j].lon < minCardinals[west])
+					minCardinals[west] = lon - cells[j].lon;
+			}
+			else
+			{
+				minCardinals[east] = 0;
+				minCardinals[west] = 0;
+			}
 		}
 	}
 
@@ -184,7 +176,7 @@ double* AnimalCell::Observe()
 
 // Public functions
 
-AnimalCell::AnimalCell(AnimalModel* m, Grid* map, double xCoord, double yCoord)
+AnimalCell::AnimalCell(AnimalModel* m, Grid* map, double xCoord, double yCoord, int cellCount)
 {
 	model = m;
 	grid = map;
@@ -194,6 +186,8 @@ AnimalCell::AnimalCell(AnimalModel* m, Grid* map, double xCoord, double yCoord)
 	horVector = 0;
 	verVector = 0;
 	next = act_nothing;
+
+	cellsLive = cellCount + 1;
 }
 
 void AnimalCell::Act()

@@ -4,7 +4,8 @@
 */
 #pragma once
 
-#import "AnimalModel.h"
+#include "../AnimalCell.h"
+#include "Environment.h"
 
 class EnvironmentLayer
 {

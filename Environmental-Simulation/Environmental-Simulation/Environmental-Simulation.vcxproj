@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Environment.cpp" />
     <ClCompile Include="EnvSim GUI\AnimalCell.cpp" />
     <ClCompile Include="EnvSim GUI\glad.c" />
     <ClCompile Include="EnvSim GUI\imgui\imgui.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Environment.h" />
     <ClInclude Include="EnvSim GUI\AnimalCell.h" />
     <ClInclude Include="EnvSim GUI\Display.h" />
     <ClInclude Include="EnvSim GUI\imgui\imconfig.h" />
