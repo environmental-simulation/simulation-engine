@@ -66,6 +66,9 @@
     <ClCompile Include="Environment.cpp">
       <Filter>Source Files\EnvSim GUI</Filter>
     </ClCompile>
+    <ClCompile Include="LearningPhase\openNN.cpp">
+      <Filter>Source Files\LearningPhase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EnvSim GUI\imgui\imgui.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="Environment.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LearningPhase\openNN.h">
+      <Filter>Source Files\LearningPhase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
