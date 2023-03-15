@@ -1,5 +1,12 @@
 #include "window.h"
 
+bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning;
+int currYear;
+ImVec2 cellSize;
+Seasons season;
+Cell* cells;
+int grassCellCol[3], wolfCellCol[3];
+
 void InitGLFW()
 {
 	glfwInit();
@@ -44,27 +51,27 @@ void RenderWindow(GLFWwindow* window)
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImGuiTextHandler(Seasons season, bool filt1Active, bool filt2Active, bool filt3Active)
-{
-	if (season == Summer)
-	{
-		ImGui::Text("Summer");
-	}
-	else if (season == Winter)
-	{
-		ImGui::Text("Winter");
-	}
-
-	std::string text = filt1Active ? "Filter 1: true" : "Filter 1: false";
-	const char* filtText = text.c_str();
-	ImGui::Text(filtText);
-	text = filt2Active ? "Filter 2: true" : "Filter 2: false";
-	filtText = text.c_str();
-	ImGui::Text(filtText);
-	text = filt3Active ? "Filter 3: true" : "Filter 3: false";
-	filtText = text.c_str();
-	ImGui::Text(filtText);
-}
+//void ImGuiTextHandler(Seasons season, bool filt1Active, bool filt2Active, bool filt3Active)
+//{
+//	if (season == Summer)
+//	{
+//		ImGui::Text("Summer");
+//	}
+//	else if (season == Winter)
+//	{
+//		ImGui::Text("Winter");
+//	}
+//
+//	std::string text = filt1Active ? "Filter 1: true" : "Filter 1: false";
+//	const char* filtText = text.c_str();
+//	ImGui::Text(filtText);
+//	text = filt2Active ? "Filter 2: true" : "Filter 2: false";
+//	filtText = text.c_str();
+//	ImGui::Text(filtText);
+//	text = filt3Active ? "Filter 3: true" : "Filter 3: false";
+//	filtText = text.c_str();
+//	ImGui::Text(filtText);
+//}
 
 void Colors()
 {
@@ -72,6 +79,12 @@ void Colors()
 
 	style.Colors[ImGuiCol_WindowBg] = ImColor(83, 83, 83);
 	style.Colors[ImGuiCol_ChildBg] = ImColor(37, 36, 42);
+	style.Colors[ImGuiCol_HeaderHovered] = ImColor(255, 255, 255, 100);
+	style.Colors[ImGuiCol_TableBorderStrong] = ImColor(0, 0, 0, 255);
+	style.Colors[ImGuiCol_TableBorderLight] = ImColor(0, 0, 0, 255);
+	//std::cout << style.CellPadding.x << std::endl;
+	//std::cout << style.CellPadding.y << std::endl;
+	style.CellPadding = ImVec2(4, 3);
 	//style.Colors[ImGuiCol_Border] = ImColor(0, 0, 0);
 }
 
@@ -81,6 +94,58 @@ ImVec2 SetItemDimensions(int width, int height)
 	ImVec2 framePadding = ImVec2(0, (height - ImGui::GetFontSize() + 1) * 0.5f);
 
 	return framePadding;
+}
+
+void ResetWindow()
+{
+	season = Summer;
+	currYear = 1;
+	filt1Active = false;
+	filt2Active = false;
+	filt3Active = false;
+	wolfActive = false;
+	rabbitActive = false;
+}
+
+void ResetGridSize(int cellCount)
+{
+	if (sizeof(cells) != 0)
+	{
+		delete[] cells;
+	}
+
+	cells = new Cell[cellCount];
+
+	for (int i = 0; i < cellCount; i++)
+	{
+		cells[i].selected = false;
+		cells[i].color[0] = grassCellCol[0];
+		cells[i].color[1] = grassCellCol[1];
+		cells[i].color[2] = grassCellCol[2];
+	}
+}
+
+void ClearGrid(int cellCount)
+{
+	for (int i = 0; i < cellCount; i++)
+	{
+		cells[i].selected = false;
+		cells[i].color[0] = grassCellCol[0];
+		cells[i].color[1] = grassCellCol[1];
+		cells[i].color[2] = grassCellCol[2];
+	}
+}
+
+void ChangeCell(int index, int cellCol[])
+{
+	cells[index].selected = !cells[index].selected;
+
+	if (cells[index].selected)
+	{
+		cells[index].color[0] = cellCol[0];
+		cells[index].color[1] = cellCol[1];
+		cells[index].color[2] = cellCol[2];
+	}
 }
 
 int RunWindow()
@@ -110,53 +175,169 @@ int RunWindow()
 
 	InitImGui(window);
 
-	bool showDemo = false;
-	bool filt1Active = false, filt2Active = false, filt3Active = false;
-	int currYear = 1;
-	int currAnimal = 0;
-	const char* animals[] = { "Wolf", "Rabbit" };
+	filt1Active = false, filt2Active = false, filt3Active = false, wolfActive = false, rabbitActive = false, windowRunning = true, simRunning = false;
+	currYear = 1;
+	season = Summer;
+	int sizeIndex = 0;
+	const char* gridSizeText[] = { "5x5", "10x10", "15x15", "20x20" };
+	int cellCounts[] = { 25, 100, 225, 400 };
+	int animalCellIndex = 0;
+	const char* animalCellType[] = { "Wolf", "Rabbit" };
 
-	Seasons season = Summer;
-	const char* test = "test";
+	//ImColor emptyCellCol = ImColor(255, 255, 255);
+	grassCellCol[0] = 6; grassCellCol[1] = 188; grassCellCol[2] = 0;
+	wolfCellCol[0] = 128; wolfCellCol[1] = 128; wolfCellCol[2] = 128;
+
+	//cellSize = ImVec2(220,80);
+	
+	//cells = ResetGridSize(cellCount[sizeIndex]);
+	ResetGridSize(cellCounts[sizeIndex]);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec2 framePadding = style.FramePadding;
-
-
-	// https://imgui-test.readthedocs.io/en/latest/#
+	Colors();
 
 
 	while (!glfwWindowShouldClose(window))
 	{
 		StartFrame();
-		Colors();
 
-		if (showDemo)
+		ImGui::Begin("Environmental Sim", &windowRunning, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar);
+
+		if (!windowRunning)
 		{
-			ImGui::ShowDemoWindow(&showDemo);
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
 
-		ImGui::Begin("Environmental Sim", NULL, ImGuiWindowFlags_NoResize);
-
-		// Left panel
-		ImGui::SetCursorPos(ImVec2(10, 30));
-		ImGui::BeginChild("Left Panel", ImVec2(400, 1160));
+		// Menu bar
+		if (ImGui::BeginMenuBar())
 		{
-			ImGui::Combo("Animals", &currAnimal, animals, 2);
-
-			ImGui::SetCursorPos(ImVec2(25, 1050));
-			if (ImGui::Button("Show Demo", ImVec2(350, 100)))
+			if (ImGui::BeginMenu("File"))
 			{
-				showDemo = !showDemo;
+				if (ImGui::MenuItem("Close")) 
+				{ 
+					glfwSetWindowShouldClose(window, GLFW_TRUE);
+				}
+				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Run"))
+			{
+				if (!simRunning)
+				{
+					if (ImGui::MenuItem("Run Simulation"))
+					{
+						ResetWindow();
+						simRunning = true;
+					}
+				}
+				else
+				{
+					// just ends/resets the simulation. grid size stays the same
+					if (ImGui::MenuItem("End Simulation"))
+					{
+						simRunning = false;
+						ResetWindow();
+					}
+
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		// Upper left panel
+		ImGui::SetCursorPos(ImVec2(10, 50));
+		ImGui::BeginChild("Upper Left Panel", ImVec2(400, 740));
+		{
+			//ImGui::Combo("Animals", &currAnimal, animals, 2);
+			style.FramePadding = SetItemDimensions(50, 50);
+			ImGui::SetCursorPos(ImVec2(10, 10));
+			ImGui::Checkbox("\tWolf", &wolfActive);
+			style.FramePadding = framePadding;
+
+			style.FramePadding = SetItemDimensions(50, 50);
+			ImGui::SetCursorPos(ImVec2(10, 70));
+			ImGui::Checkbox("\tRabbit", &rabbitActive);
+			style.FramePadding = framePadding;
+		}
+		ImGui::EndChild();
+
+		// Lower left panel
+		ImGui::SetCursorPos(ImVec2(10, 800));
+		ImGui::BeginChild("Lower Left Panel", ImVec2(400, 390));
+		{
+			ImGui::SetCursorPos(ImVec2(10, 10));
+			int temp = sizeIndex;
+			ImGui::Combo("Grid Size", &sizeIndex, gridSizeText, 4);
+			if (simRunning && ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Can't Change Size While Running");
+			}
+
+			if (simRunning && temp != sizeIndex)
+			{
+				sizeIndex = temp;
+			}
+			else if(!simRunning && temp != sizeIndex)
+			{
+				ResetWindow();
+				//cells = ResetGridSize(cellCount[sizeIndex]);
+				ResetGridSize(cellCounts[sizeIndex]);
+			}
+
+			ImGui::SetCursorPos(ImVec2(10, 30));
+			ImGui::Combo("Animal Cell", &animalCellIndex, animalCellType, 2);
 		}
 		ImGui::EndChild();
 
 		// Middle panel
-		ImGui::SetCursorPos(ImVec2(420, 30));
-		ImGui::BeginChild("Mid Panel", ImVec2(1160, 900));
+		ImGui::SetCursorPos(ImVec2(420, 50));
+		ImGui::BeginChild("Mid Panel", ImVec2(1160, 880));
 		{
-			ImGuiTextHandler(season, filt1Active, filt2Active, filt3Active);
+			ImGui::SetCursorPos(ImVec2(10, 10));
+			int columnCount = sqrt(cellCounts[sizeIndex]);
+			if (ImGui::BeginTable("Grid", columnCount, 1920 | 64, ImVec2(1140.0f, 860.0f)))
+			{
+				for (int i = 0; i < columnCount; i++)
+				{
+					ImGui::TableSetupColumn(NULL, 16);
+				}
+
+				for (int i = 0; i < cellCounts[sizeIndex]; i++)
+				{
+					ImGui::TableNextColumn();
+					ImDrawList* drawList = ImGui::GetWindowDrawList();
+					drawList->ChannelsSplit(2);
+					drawList->ChannelsSetCurrent(1);
+					ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(cells[i].color[0], cells[i].color[1], cells[i].color[2], 255));
+					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2((1130 / columnCount), (830 / columnCount))))
+					{
+						if (!simRunning && currYear == 1)
+						{
+							ChangeCell(i, wolfCellCol);
+							std::cout << 1130 / columnCount << std::endl;
+							std::cout << 830 / columnCount << std::endl;
+						}
+					}
+					ImGui::PopStyleColor();
+
+					if (!ImGui::IsItemHovered() && !cells[i].selected)
+					{
+						drawList->ChannelsSetCurrent(0);
+						ImVec2 posMin = ImGui::GetItemRectMin();
+						ImVec2 posMax = ImGui::GetItemRectMax();
+						ImGui::GetWindowDrawList()->AddRectFilled(posMin, posMax, IM_COL32(grassCellCol[0], grassCellCol[1], grassCellCol[2], 255));
+					}
+					if (!simRunning && currYear != 1 && ImGui::IsItemHovered())
+					{
+						ImGui::SetTooltip("Animals Must Be Placed In Year 1");
+					}
+
+					drawList->ChannelsMerge();
+				}
+				ImGui::EndTable();
+			}
 		}
 		ImGui::EndChild();
 
@@ -183,12 +364,12 @@ int RunWindow()
 		ImGui::EndChild();
 
 		// Right Panel
-		ImGui::SetCursorPos(ImVec2(1590, 30));
-		ImGui::BeginChild("Right Panel", ImVec2(400, 1160));
+		ImGui::SetCursorPos(ImVec2(1590, 50));
+		ImGui::BeginChild("Right Panel", ImVec2(400, 1140));
 		{
 			style.FramePadding = SetItemDimensions(50, 50);
 			ImGui::SetCursorPos(ImVec2(10, 10));
-			ImGui::Checkbox("\tFilter 1", &filt1Active);
+			ImGui::Checkbox("\tVegitation", &filt1Active);
 			style.FramePadding = framePadding;
 
 			style.FramePadding = SetItemDimensions(50, 50);
@@ -200,20 +381,14 @@ int RunWindow()
 			ImGui::SetCursorPos(ImVec2(10, 130));
 			ImGui::Checkbox("\tFilter 3", &filt3Active);
 			style.FramePadding = framePadding;
-
-			ImGui::SetCursorPos(ImVec2(25, 1050));
-			if (ImGui::Button("Close Window", ImVec2(350, 100)))
-			{
-				glfwSetWindowShouldClose(window, GLFW_TRUE);
-			}
 		}
 		ImGui::EndChild();
 
 		ImGui::End();
 
 		RenderWindow(window);
-
 		glfwSwapBuffers(window);
+
 		glfwPollEvents();
 	}
 
