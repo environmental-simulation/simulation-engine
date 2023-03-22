@@ -297,7 +297,7 @@ int RunWindow()
 		{
 			ImGui::SetCursorPos(ImVec2(10, 10));
 			int columnCount = sqrt(cellCounts[sizeIndex]);
-			if (ImGui::BeginTable("Grid", columnCount, 1920 | 64, ImVec2(1140.0f, 860.0f)))
+			if (ImGui::BeginTable("Grid", columnCount, 1920 | 64, ImVec2(860.0f, 840.0f)))
 			{
 				for (int i = 0; i < columnCount; i++)
 				{
@@ -311,13 +311,13 @@ int RunWindow()
 					drawList->ChannelsSplit(2);
 					drawList->ChannelsSetCurrent(1);
 					ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(cells[i].color[0], cells[i].color[1], cells[i].color[2], 255));
-					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2((1130 / columnCount), (830 / columnCount))))
+					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2((840 / columnCount) - 8, (840 / columnCount)- 6)))
 					{
 						if (!simRunning && currYear == 1)
 						{
 							ChangeCell(i, wolfCellCol);
-							std::cout << 1130 / columnCount << std::endl;
-							std::cout << 830 / columnCount << std::endl;
+							std::cout << (800 / columnCount) - 8 << std::endl;
+							std::cout << (800 / columnCount) - 6 << std::endl;
 						}
 					}
 					ImGui::PopStyleColor();

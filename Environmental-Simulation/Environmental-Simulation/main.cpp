@@ -6,10 +6,10 @@
 int main()
 {
 	// Run Learning Phase program
-	RunNN();
+	//RunNN();
 	
 	// Run Reacting Phase program
-	//RunWindow();
+	RunWindow();
 
 	return 0;
 }
