@@ -1,7 +1,8 @@
 #include "window.h"
 
-bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning;
+bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning, leftMousePressed, titleBarHovered;;
 int currYear;
+int cursorPosX, cursorPosY, offsetPosX, offsetPosY;
 ImVec2 cellSize;
 Seasons season;
 Cell* cells;
@@ -14,10 +15,8 @@ void InitGLFW()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_FLOATING, true);
-	glfwWindowHint(GLFW_RESIZABLE, false);
-	glfwWindowHint(GLFW_MAXIMIZED, true);
-	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
+	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 }
 
 void InitImGui(GLFWwindow* window)
@@ -31,13 +30,15 @@ void InitImGui(GLFWwindow* window)
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void StartFrame()
+void StartFrame(GLFWwindow* window)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(2000, 1200));
-	//ImGui::SetNextWindowPos();
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	ImGui::SetNextWindowSize(ImVec2(width, height));
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
 }
 
 void RenderWindow(GLFWwindow* window)
@@ -45,33 +46,53 @@ void RenderWindow(GLFWwindow* window)
 	ImGui::Render();
 	int displayWidth, displayHeight;
 	glfwGetFramebufferSize(window, &displayWidth, &displayHeight);
+	//std::cout << displayWidth << "\n" << displayHeight << "\n\n";
 	glViewport(0, 0, displayWidth, displayHeight);
-	//glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-//void ImGuiTextHandler(Seasons season, bool filt1Active, bool filt2Active, bool filt3Active)
-//{
-//	if (season == Summer)
-//	{
-//		ImGui::Text("Summer");
-//	}
-//	else if (season == Winter)
-//	{
-//		ImGui::Text("Winter");
-//	}
-//
-//	std::string text = filt1Active ? "Filter 1: true" : "Filter 1: false";
-//	const char* filtText = text.c_str();
-//	ImGui::Text(filtText);
-//	text = filt2Active ? "Filter 2: true" : "Filter 2: false";
-//	filtText = text.c_str();
-//	ImGui::Text(filtText);
-//	text = filt3Active ? "Filter 3: true" : "Filter 3: false";
-//	filtText = text.c_str();
-//	ImGui::Text(filtText);
-//}
+void MoveWindow(GLFWwindow* window)
+{
+	int windowPosX, windowPosY;
+	glfwGetWindowPos(window, &windowPosX, &windowPosY);
+	glfwSetWindowPos(window, windowPosX + offsetPosX, windowPosY + offsetPosY);
+	offsetPosX = 0, offsetPosY = 0;
+	cursorPosX += offsetPosX;
+	cursorPosY += offsetPosY;
+}
+
+void CursorPosCallback(GLFWwindow* window, double xPos, double yPos)
+{
+	if (leftMousePressed)
+	{
+		offsetPosX = xPos - cursorPosX;
+		offsetPosY = yPos - cursorPosY;
+	}
+}
+
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (titleBarHovered)
+	{
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		{
+			leftMousePressed = true;
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			cursorPosX = std::floor(x);
+			cursorPosY = std::floor(y);
+			std::cout << "Cursor X: " << cursorPosX << "\nCursor Y: " << cursorPosY << std::endl;
+		}
+
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+		{
+			leftMousePressed = false;
+			cursorPosX = 0;
+			cursorPosY = 0;
+		}
+	}
+}
 
 void Colors()
 {
@@ -82,8 +103,14 @@ void Colors()
 	style.Colors[ImGuiCol_HeaderHovered] = ImColor(255, 255, 255, 100);
 	style.Colors[ImGuiCol_TableBorderStrong] = ImColor(0, 0, 0, 255);
 	style.Colors[ImGuiCol_TableBorderLight] = ImColor(0, 0, 0, 255);
+
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	//std::cout << "Font: " << ImGui::GetTextLineHeight() << "\nFrame padding Y: " << style.FramePadding.y << std::endl;
+	//std::cout << "Title bar height: " << ImGui::GetTextLineHeight() + style.FramePadding.y * 2.0f << std::endl;
 	//std::cout << style.CellPadding.x << std::endl;
-	//std::cout << style.CellPadding.y << std::endl;
+	//std::cout << style.CellPadding.y << std::endl; 
 	style.CellPadding = ImVec2(4, 3);
 	//style.Colors[ImGuiCol_Border] = ImColor(0, 0, 0);
 }
@@ -158,8 +185,7 @@ int RunWindow()
 		return 0;
 	}
 
-	int width = glfwGetVideoMode(monitor)->width;
-	int height = glfwGetVideoMode(monitor)->height;
+	int width = 2000, height = 1200;
 
 	GLFWwindow* window = glfwCreateWindow(width, height, "Environmental Sim", NULL, NULL);
 	if (window == NULL)
@@ -167,15 +193,17 @@ int RunWindow()
 		return 1;
 	}
 
-	glfwSetWindowAttrib(window, GLFW_DECORATED, false);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+
+	glfwSetCursorPosCallback(window, CursorPosCallback);
+	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
-	//glfwSwapInterval(1); // vsync
 
 	InitImGui(window);
 
-	filt1Active = false, filt2Active = false, filt3Active = false, wolfActive = false, rabbitActive = false, windowRunning = true, simRunning = false;
+	filt1Active = false, filt2Active = false, filt3Active = false, wolfActive = false, rabbitActive = false, windowRunning = true, simRunning = false, leftMousePressed = false, titleBarHovered = false;
 	currYear = 1;
 	season = Summer;
 	int sizeIndex = 0;
@@ -200,13 +228,26 @@ int RunWindow()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		StartFrame();
+		StartFrame(window);
+
+		if (leftMousePressed && titleBarHovered)
+		{
+			MoveWindow(window);
+		}
+		else
+		{
+			titleBarHovered = false;
+		}
 
 		ImGui::Begin("Environmental Sim", &windowRunning, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar);
-
-		if (!windowRunning)
+		if (ImGui::IsItemHovered())
 		{
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			if (!windowRunning)
+			{
+				glfwSetWindowShouldClose(window, GLFW_TRUE);
+			}
+
+			titleBarHovered = true;
 		}
 
 		// Menu bar
