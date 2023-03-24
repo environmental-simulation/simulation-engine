@@ -3,7 +3,8 @@
 bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning, leftMousePressed, titleBarHovered;;
 int currYear;
 int cursorPosX, cursorPosY, offsetPosX, offsetPosY;
-ImVec2 cellSize;
+int gridSizeX, gridSizeY;
+int curCellSize, minCellSize, maxCellSize;
 Seasons season;
 Cell* cells;
 int grassCellCol[3], wolfCellCol[3];
@@ -82,7 +83,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 			glfwGetCursorPos(window, &x, &y);
 			cursorPosX = std::floor(x);
 			cursorPosY = std::floor(y);
-			std::cout << "Cursor X: " << cursorPosX << "\nCursor Y: " << cursorPosY << std::endl;
+			//std::cout << "Cursor X: " << cursorPosX << "\nCursor Y: " << cursorPosY << std::endl;
 		}
 
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
@@ -94,25 +95,16 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	}
 }
 
-void Colors()
+void Colors(ImGuiStyle& style)
 {
-	ImGuiStyle& style = ImGui::GetStyle();
+	//ImGuiStyle& style = ImGui::GetStyle();
 
 	style.Colors[ImGuiCol_WindowBg] = ImColor(83, 83, 83);
 	style.Colors[ImGuiCol_ChildBg] = ImColor(37, 36, 42);
 	style.Colors[ImGuiCol_HeaderHovered] = ImColor(255, 255, 255, 100);
 	style.Colors[ImGuiCol_TableBorderStrong] = ImColor(0, 0, 0, 255);
 	style.Colors[ImGuiCol_TableBorderLight] = ImColor(0, 0, 0, 255);
-
-
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
-	//std::cout << "Font: " << ImGui::GetTextLineHeight() << "\nFrame padding Y: " << style.FramePadding.y << std::endl;
-	//std::cout << "Title bar height: " << ImGui::GetTextLineHeight() + style.FramePadding.y * 2.0f << std::endl;
-	//std::cout << style.CellPadding.x << std::endl;
-	//std::cout << style.CellPadding.y << std::endl; 
-	style.CellPadding = ImVec2(4, 3);
-	//style.Colors[ImGuiCol_Border] = ImColor(0, 0, 0);
+	style.CellPadding = ImVec2(5, 3);
 }
 
 ImVec2 SetItemDimensions(int width, int height)
@@ -134,7 +126,7 @@ void ResetWindow()
 	rabbitActive = false;
 }
 
-void ResetGridSize(int cellCount)
+void ResetGridSize(int cellCount, ImGuiStyle& style)
 {
 	if (sizeof(cells) != 0)
 	{
@@ -142,6 +134,17 @@ void ResetGridSize(int cellCount)
 	}
 
 	cells = new Cell[cellCount];
+	int colCount = sqrt(cellCount);
+	int cPaddingSizeX = (((2 * style.CellPadding.x) * (colCount - 1)) + (2 * style.CellPadding.x));
+	minCellSize = ((gridSizeX - cPaddingSizeX) / colCount);
+	maxCellSize = minCellSize * 2;
+
+	curCellSize = (maxCellSize + minCellSize) / 2;
+
+
+	/*std::cout << "Min Cell Size: " << minCellSize << std::endl;
+	std::cout << "Max Cell Size: " << maxCellSize << std::endl;
+	std::cout << "Cur Cell Size: " << curCellSize << std::endl;*/
 
 	for (int i = 0; i < cellCount; i++)
 	{
@@ -216,15 +219,14 @@ int RunWindow()
 	grassCellCol[0] = 6; grassCellCol[1] = 188; grassCellCol[2] = 0;
 	wolfCellCol[0] = 128; wolfCellCol[1] = 128; wolfCellCol[2] = 128;
 
-	//cellSize = ImVec2(220,80);
-	
-	//cells = ResetGridSize(cellCount[sizeIndex]);
-	ResetGridSize(cellCounts[sizeIndex]);
+	//ResetGridSize(cellCounts[sizeIndex]);
+	gridSizeX = 1140, gridSizeY = 860;
+	//cellSize = (((2*)))
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec2 framePadding = style.FramePadding;
-	Colors();
-
+	Colors(style);
+	ResetGridSize(cellCounts[sizeIndex], style);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -291,7 +293,6 @@ int RunWindow()
 		ImGui::SetCursorPos(ImVec2(10, 50));
 		ImGui::BeginChild("Upper Left Panel", ImVec2(400, 740));
 		{
-			//ImGui::Combo("Animals", &currAnimal, animals, 2);
 			style.FramePadding = SetItemDimensions(50, 50);
 			ImGui::SetCursorPos(ImVec2(10, 10));
 			ImGui::Checkbox("\tWolf", &wolfActive);
@@ -301,6 +302,40 @@ int RunWindow()
 			ImGui::SetCursorPos(ImVec2(10, 70));
 			ImGui::Checkbox("\tRabbit", &rabbitActive);
 			style.FramePadding = framePadding;
+
+			if (ImGui::Button("Zoom In"))
+			{
+				int sizeChange = std::ceil(maxCellSize * 0.1f);
+				if (curCellSize + sizeChange < maxCellSize)
+				{
+					curCellSize += sizeChange;
+				}
+				else
+				{
+					curCellSize = maxCellSize;
+				}
+
+				/*std::cout << "Min Cell Size: " << minCellSize << std::endl;
+				std::cout << "Max Cell Size: " << maxCellSize << std::endl;
+				std::cout << "Cur Cell Size: " << curCellSize << std::endl;*/
+			}
+
+			if (ImGui::Button("Zoom Out"))
+			{
+				int sizeChange = std::ceil(maxCellSize * 0.1f);
+				if (curCellSize - sizeChange > minCellSize)
+				{
+					curCellSize -= sizeChange;
+				}
+				else
+				{
+					curCellSize = minCellSize;
+				}
+
+				/*std::cout << "Min Cell Size: " << minCellSize << std::endl;
+				std::cout << "Max Cell Size: " << maxCellSize << std::endl;
+				std::cout << "Cur Cell Size: " << curCellSize << std::endl;*/
+			}
 		}
 		ImGui::EndChild();
 
@@ -323,8 +358,7 @@ int RunWindow()
 			else if(!simRunning && temp != sizeIndex)
 			{
 				ResetWindow();
-				//cells = ResetGridSize(cellCount[sizeIndex]);
-				ResetGridSize(cellCounts[sizeIndex]);
+				ResetGridSize(cellCounts[sizeIndex], style);
 			}
 
 			ImGui::SetCursorPos(ImVec2(10, 30));
@@ -338,7 +372,8 @@ int RunWindow()
 		{
 			ImGui::SetCursorPos(ImVec2(10, 10));
 			int columnCount = sqrt(cellCounts[sizeIndex]);
-			if (ImGui::BeginTable("Grid", columnCount, 1920 | 64, ImVec2(860.0f, 840.0f)))
+			ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+			if (ImGui::BeginTable("Grid", columnCount, tableFlags, ImVec2(gridSizeX, gridSizeY)))
 			{
 				for (int i = 0; i < columnCount; i++)
 				{
@@ -352,13 +387,13 @@ int RunWindow()
 					drawList->ChannelsSplit(2);
 					drawList->ChannelsSetCurrent(1);
 					ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(cells[i].color[0], cells[i].color[1], cells[i].color[2], 255));
-					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2((840 / columnCount) - 8, (840 / columnCount)- 6)))
+					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2(curCellSize, curCellSize)))
 					{
 						if (!simRunning && currYear == 1)
 						{
 							ChangeCell(i, wolfCellCol);
-							std::cout << (800 / columnCount) - 8 << std::endl;
-							std::cout << (800 / columnCount) - 6 << std::endl;
+							//std::cout <<  << std::endl;
+							//std::cout << (800 / columnCount) - 6 << std::endl;
 						}
 					}
 					ImGui::PopStyleColor();

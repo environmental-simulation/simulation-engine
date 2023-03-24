@@ -27,7 +27,8 @@ enum Seasons
 extern bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning, leftMousePressed, titleBarHovered;
 extern int currYear;
 extern int cursorPosX, cursorPosY, offsetPosX, offsetPosY;
-extern ImVec2 cellSize;
+extern int gridSizeX, gridSizeY;
+extern int curCellSize, minCellSize, maxCellSize;
 extern Seasons season;
 extern int grassCellCol[3], wolfCellCol[3];
 extern Cell* cells;
@@ -54,13 +55,13 @@ void CursorPosCallback(GLFWwindow* window, double xPos, double yPos);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 // Setting colors
-void Colors();
+void Colors(ImGuiStyle& style);
 
 ImVec2 SetItemDimensions(int width, int height);
 
 void ResetWindow();
 
-void ResetGridSize(int cellCount);
+void ResetGridSize(int cellCount, ImGuiStyle& style);
 
 void ClearGrid(int cellCount);
 
