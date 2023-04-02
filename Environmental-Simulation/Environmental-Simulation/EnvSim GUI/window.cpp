@@ -1,6 +1,44 @@
 #include "window.h"
 
-bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning, leftMousePressed, titleBarHovered;;
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+// Simple helper function to load an image into a OpenGL texture with common settings
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
+{
+	// Load from file
+	int image_width = 0;
+	int image_height = 0;
+	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+	if (image_data == NULL)
+		return false;
+
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+	// Upload pixels into texture
+#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+	stbi_image_free(image_data);
+
+	*out_texture = image_texture;
+	*out_width = image_width;
+	*out_height = image_height;
+
+	return true;
+}
+
+bool filt1Active, filt2Active, filt3Active, wolfActive, rabbitActive, windowRunning, simRunning, leftMousePressed, titleBarHovered;
 int currYear;
 int cursorPosX, cursorPosY, offsetPosX, offsetPosY;
 int gridSizeX, gridSizeY;
@@ -135,16 +173,18 @@ void ResetGridSize(int cellCount, ImGuiStyle& style)
 
 	cells = new Cell[cellCount];
 	int colCount = sqrt(cellCount);
-	int cPaddingSizeX = (((2 * style.CellPadding.x) * (colCount - 1)) + (2 * style.CellPadding.x));
-	minCellSize = ((gridSizeX - cPaddingSizeX) / colCount);
-	maxCellSize = minCellSize * 2;
+	//std::cout << "col count: " << colCount << std::endl;
+	int cPaddingSize = (((2 * style.CellPadding.x) * (colCount - 1)) + (2 * style.CellPadding.x));
+	//std::cout << "cell pad: " << cPaddingSize << std::endl;
+	minCellSize =  cPaddingSize / colCount;
+	maxCellSize = minCellSize * 4;
 
 	curCellSize = (maxCellSize + minCellSize) / 2;
 
 
-	/*std::cout << "Min Cell Size: " << minCellSize << std::endl;
+	std::cout << "Min Cell Size: " << minCellSize << std::endl;
 	std::cout << "Max Cell Size: " << maxCellSize << std::endl;
-	std::cout << "Cur Cell Size: " << curCellSize << std::endl;*/
+	std::cout << "Cur Cell Size: " << curCellSize << std::endl;
 
 	for (int i = 0; i < cellCount; i++)
 	{
@@ -210,8 +250,9 @@ int RunWindow()
 	currYear = 1;
 	season = Summer;
 	int sizeIndex = 0;
-	const char* gridSizeText[] = { "5x5", "10x10", "15x15", "20x20" };
-	int cellCounts[] = { 25, 100, 225, 400 };
+	const char* gridSizeText[] = { "100x100" };
+	int cellCounts[] = { 10000 };
+
 	int animalCellIndex = 0;
 	const char* animalCellType[] = { "Wolf", "Rabbit" };
 
@@ -228,10 +269,21 @@ int RunWindow()
 	Colors(style);
 	ResetGridSize(cellCounts[sizeIndex], style);
 
+	const char* filename = "EnvSim GUI\\images\\wolf.png";
+	const char* filename2 = "EnvSim GUI\\images\\filter.jpg";
+	int my_image_width = 0;
+	int my_image_height = 0;
+	GLuint my_image_texture = 0;
+	GLuint my_image_texture2 = 0;
+	bool ret = LoadTextureFromFile(filename, &my_image_texture, &my_image_width, &my_image_height);
+	bool ret2 = LoadTextureFromFile(filename2, &my_image_texture2, &my_image_width, &my_image_height);
+	IM_ASSERT(ret);
+	IM_ASSERT(ret2);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		StartFrame(window);
-
+		
 		if (leftMousePressed && titleBarHovered)
 		{
 			MoveWindow(window);
@@ -363,6 +415,11 @@ int RunWindow()
 
 			ImGui::SetCursorPos(ImVec2(10, 30));
 			ImGui::Combo("Animal Cell", &animalCellIndex, animalCellType, 2);
+
+			if (animalCellIndex == 1)
+			{
+				ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(10, 10));
+			}
 		}
 		ImGui::EndChild();
 
@@ -384,7 +441,7 @@ int RunWindow()
 				{
 					ImGui::TableNextColumn();
 					ImDrawList* drawList = ImGui::GetWindowDrawList();
-					drawList->ChannelsSplit(2);
+					drawList->ChannelsSplit(3);
 					drawList->ChannelsSetCurrent(1);
 					ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(cells[i].color[0], cells[i].color[1], cells[i].color[2], 255));
 					if (ImGui::Selectable(std::to_string(i).c_str(), cells[i].selected, 0, ImVec2(curCellSize, curCellSize)))
@@ -392,6 +449,8 @@ int RunWindow()
 						if (!simRunning && currYear == 1)
 						{
 							ChangeCell(i, wolfCellCol);
+							//std::cout << "Cell " << i << " has been selected" << std::endl;
+							//ImGui::SetItemAllowOverlap();
 							//std::cout <<  << std::endl;
 							//std::cout << (800 / columnCount) - 6 << std::endl;
 						}
@@ -410,7 +469,21 @@ int RunWindow()
 						ImGui::SetTooltip("Animals Must Be Placed In Year 1");
 					}
 
+					if (cells[i].selected)
+					{
+						drawList->ChannelsSetCurrent(2);
+						drawList->AddImage((void*)(intptr_t)my_image_texture, ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+						if (filt1Active)
+						{
+							drawList->AddImage((void*)(intptr_t)my_image_texture, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0,0), ImVec2(1,1), IM_COL32(25, 80, 145, 90));
+						}
+						//ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(10, 10));
+					}
+
 					drawList->ChannelsMerge();
+
+					
 				}
 				ImGui::EndTable();
 			}
@@ -461,6 +534,7 @@ int RunWindow()
 		ImGui::EndChild();
 
 		ImGui::End();
+		
 
 		RenderWindow(window);
 		glfwSwapBuffers(window);

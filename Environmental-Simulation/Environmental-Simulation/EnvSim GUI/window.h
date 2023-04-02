@@ -1,4 +1,5 @@
 // Displays and runs the window for software
+#pragma once
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -13,10 +14,10 @@
 class Cell
 {
 public:
-	bool selected;
+	bool selected; // just use this for placing animals
 	int color[3];
-};
 
+};
 // todo: port this enum set over into the Reacting Phase map files
 enum Seasons
 {

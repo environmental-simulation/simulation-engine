@@ -122,6 +122,9 @@
     <ClInclude Include="LearningPhase\openNN.h">
       <Filter>Source Files\LearningPhase</Filter>
     </ClInclude>
+    <ClInclude Include="EnvSim GUI\imgui\stb_image.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="index.html">

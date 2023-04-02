@@ -47,6 +47,7 @@
     <ClInclude Include="EnvSim GUI\imgui\imstb_rectpack.h" />
     <ClInclude Include="EnvSim GUI\imgui\imstb_textedit.h" />
     <ClInclude Include="EnvSim GUI\imgui\imstb_truetype.h" />
+    <ClInclude Include="EnvSim GUI\imgui\stb_image.h" />
     <ClInclude Include="EnvSim GUI\window.h" />
     <ClInclude Include="LearningPhase\AnimalModel.h" />
     <ClInclude Include="LearningPhase\ELP.h" />
