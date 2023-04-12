@@ -25,7 +25,7 @@ private:
 	void UpdateCellCount(); // Updates the cells array of each cell in the array
 
 public:
-	AnimalCell(AnimalModel* m, Grid* map, double xCoord, double yCoord, int cellCount);
+	AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, int cellCount);
 
 	void Act(); // Function that inputs observed values, processes them from the model, and changes vector and next action
 

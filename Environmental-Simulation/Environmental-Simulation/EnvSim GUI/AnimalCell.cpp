@@ -176,7 +176,7 @@ double* AnimalCell::Observe()
 
 // Public functions
 
-AnimalCell::AnimalCell(AnimalModel* m, Grid* map, double xCoord, double yCoord, int cellCount)
+AnimalCell::AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, int cellCount)
 {
 	model = m;
 	grid = map;

@@ -7,7 +7,7 @@
 #include "../AnimalCell.h"
 #include "Environment.h"
 
-class EnvironmentLayer
+struct EnvironmentLayer
 {
 	char* name;
 	double** grid;
@@ -16,32 +16,67 @@ class EnvironmentLayer
 	// Color value or reference to value
 };
 
+struct Frame
+{
+public:
+	bool season;							// True for Summer, False for Winter
+	AnimalCell*** cells;
+	int* cellCount;							// Array containing the size of each cell array
+	int animalCount;
+
+	// Constructor
+	Frame(bool frameSeason, AnimalCell*** frameCells, int frameCellCount, int frameAnimals)
+	{
+		season = frameSeason;
+		cells = frameCells;
+		cellCount = frameCellCount;
+		animalCount = frameAnimals;
+	}
+};
+
 class Simulation
 {
 private:
-	AnimalModel** animals; // Array of Animal Model pointers
-	AnimalCell*** cells; // Array of Animal Cell arrays
-	int* cellCount; // Array containing the size of each cell arrays
-	int animalCount; // Count of animals
+	AnimalModel** animals;					// Array of Animal Model pointers
+	int animalCount;						// Count of animal species, also size of cellCount
 
-	EnvironmentLayer** layers;
-	bool* layerMute;
-	int layerCount;
+	EnvironmentLayer** layers;				// Array of layers used
+	bool* layerMute;						// Boolean array to show whether a layer has been "muted" or not
+	int layerCount;							// Layer count
+
+	Frame* frames;							// The array of frames, even numbers are summer and odd are winter
+	int years;								// The amount of years in the simulation, years * 2 = frames length
 	
 public:
 	Simulation() { };
 
-	void AddAnimal(AnimalModel* model, int cells); // Adds animals and randomly places cells
+	// Models and Model Index
+	///////////////////////////////////////////////
 
-	void HideAnimal(int animalIdx); // Hides a species from view
+	int GetIdx(AnimalModel* model);						// Gets the index of a specific animal model
 
-	void RemoveAnimal(int animalIdx);
+	int GetAnimalCount();								// Gets the amount of animals
 
-	void AddLayer(EnvironmentLayer* layer); // Loads from a file
+	void AddAnimal(AnimalModel* model);					// Adds animals to the simulation
 
-	void HideLayer(int layerIdx); // Hides a layer from view
+	void RemoveAnimal(int animalIdx);					// Removes an animal species from the simulation
 
-	void MuteLayer(int layerIdx); // Prevents a layer from being calculated
+	// Environmental Layers
 
-	void RemoveLayer(int layerIdx);
+	int GetLayerCount();								// Returns the layer count
+
+	void AddLayer(EnvironmentLayer* layer);				// Loads from a file
+
+	void RemoveLayer(int layerIdx);						// Removes a specific layer
+	
+	bool* GetMute();									// Returns the array of muted layers
+
+	void MuteLayer(int layerIdx);						// Prevents a layer from being calculated, if already muted undoes the mute
+
+	// Frames and Cells
+	///////////////////////////////////////////////
+
+	void AddCells(int idx, int amount);					// Adds 'amount' cells of animal in animals['idx'] to the simulation at the START ONLY
+
+	void SetFrame(int year, bool season, Frame* frame);
 };
