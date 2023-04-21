@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../LearningPhase/AnimalModel.h"
+#include "../Environment.h"
+
 
 class AnimalCell
 {

@@ -25,7 +25,7 @@ public:
 	int animalCount;
 
 	// Constructor
-	Frame(bool frameSeason, AnimalCell*** frameCells, int frameCellCount, int frameAnimals)
+	Frame(bool frameSeason, AnimalCell*** frameCells, int* frameCellCount, int frameAnimals)
 	{
 		season = frameSeason;
 		cells = frameCells;
