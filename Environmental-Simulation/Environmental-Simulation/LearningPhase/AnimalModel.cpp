@@ -47,7 +47,7 @@ AnimalModel::AnimalModel(char* inName, int size, int inSize, int r)
 
 void AnimalModel::CopyInputs(double* newIn)
 {
-	for (int i = 0; i < Outputs; i++)
+	for (int i = 0; i < inputSize; i++)
 	{
 		outputs[i] = newIn[i];
 	}
@@ -55,32 +55,32 @@ void AnimalModel::CopyInputs(double* newIn)
 
 void AnimalModel::Process()
 {
-	//for (int i = 0; i < NODE_COUNT_PER_LAYER; i++)
-	//{
-	//	for (int j = 0; j < inputSize; j++)
-	//	{
-	//		hNodes[0][i] = weights[0][i][j] * inputs[j];
-	//	}
-	//}
+	for (int i = 0; i < NODE_COUNT_PER_LAYER; i++)
+	{
+		for (int j = 0; j < inputSize; j++)
+		{
+			hNodes[0][i].values = weights[0][i][j] * inputs[j];
+		}
+	}
 
-	//for (int i = 1; i < NODE_LAYER_COUNT; i++)
-	//{
-	//	for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
-	//	{
-	//		for (int k = 0; k < NODE_COUNT_PER_LAYER; k++)
-	//		{
-	//			hNodes[i][j] = weights[i][j][k] * hNodes[i - 1][k];
-	//		}
-	//	}
-	//}
+	for (int i = 1; i < NODE_LAYER_COUNT; i++)
+	{
+		for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
+		{
+			for (int k = 0; k < NODE_COUNT_PER_LAYER; k++)
+			{
+				hNodes[i][j].values = weights[i][j][k] * hNodes[i - 1][k].values;
+			}
+		}
+	}
 
-	//for (int i = 0; i < Outputs; i++)
-	//{
-	//	for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
-	//	{
-	//		ModelOutputs[i] = weights[NODE_COUNT_PER_LAYER + 1][i][j] * hNodes[NODE_LAYER_COUNT][j];
-	//	}
-	//}
+	for (int i = 0; i < Outputs; i++)
+	{
+		for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
+		{
+			outputs[i] = weights[NODE_COUNT_PER_LAYER + 1][i][j] * hNodes[NODE_LAYER_COUNT][j].values;
+		}
+	}
 }
 
 int AnimalModel::GetRange() { return range; }

@@ -174,9 +174,35 @@ double* AnimalCell::Observe()
 	return newInputs;
 }
 
+void AnimalCell::UpdateCellCount()
+{
+	for (int i = 0; i < cellsLive; i++)
+	{
+		if (&cells[i] != this)
+			delete cells[i].cells;
+		cells[i].cells = cells;
+		cells[i].cellsLive = cellsLive;
+	}
+}
+
 // Public functions
 
-AnimalCell::AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, int cellCount)
+AnimalCell::AnimalCell()
+{
+	model = nullptr;
+	grid = nullptr;
+
+	lon = -1;
+	lat = -1;
+	horVector = 0;
+	verVector = 0;
+	next = act_nothing;
+
+	cellsLive = 0;
+	cells = nullptr;
+}
+
+AnimalCell::AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, AnimalCell* cellsAlive, int cellCount)
 {
 	model = m;
 	grid = map;
@@ -188,6 +214,10 @@ AnimalCell::AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, int ce
 	next = act_nothing;
 
 	cellsLive = cellCount + 1;
+	if (cellsAlive == nullptr)
+		cells = new AnimalCell[1];
+	else
+		cells = new AnimalCell[cellsLive];
 }
 
 void AnimalCell::Act()

@@ -29,7 +29,6 @@ enum CellAction
 struct node
 {
 	double values;
-	double bias; // todo: remove if unnecessary, maybe add a backpropagation ratio tracker
 };
 
 class AnimalModel

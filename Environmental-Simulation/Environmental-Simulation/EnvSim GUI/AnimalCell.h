@@ -24,16 +24,18 @@ private:
 
 	double* Observe(); // Observes nearby squares using coordinates and grid range to inputs
 
-	void UpdateCellCount(); // Updates the cells array of each cell in the array
+	void UpdateCellCount(); // Updates the cells array of each cell in the array with THIS cell's cell array
 
 public:
-	AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, int cellCount);
+	AnimalCell();	// Default constructor
+
+	AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, AnimalCell* cellsAlive, int cellCount);
 
 	void Act(); // Function that inputs observed values, processes them from the model, and changes vector and next action
 
 	AnimalCell* Split(); // Returns the new AnimalCell to be placed in any location by the Simulation
 
-	void Merge(AnimalCell* partner); // may be programmed to either be a "Consumptive" merge where one cell "eats" the other, or a mutual merge where they must both agree to merge
+	void Merge(AnimalCell* partner); // Programmed to either be a "Consumptive" merge
 
 	void Die();
 };
