@@ -70,7 +70,7 @@ std::vector<double> Brain::compute_directional_inputs(const std::vector<std::vec
 	inv_mag = sqrt(inv_mag);
 
 	if (inv_mag > 0.0) inv_mag = 1.0 / inv_mag;
-	else		       inv_mag = 1.0;
+	else inv_mag = 1.0;
 
 	for (double& val : directional_inputs)
 	{
@@ -93,7 +93,7 @@ std::vector<double> Brain::predict(std::vector<std::vector<std::vector<double>>>
 
 	Eigen::MatrixXd out = net.predict(in.col(0));
 
-	std::vector<double> prediction = {prediction[i] = out(0, 0), prediction[i] = out(1, 0)};
+	std::vector<double> prediction = {out(0, 0), out(1, 0)};
 
 	return prediction;
 }
