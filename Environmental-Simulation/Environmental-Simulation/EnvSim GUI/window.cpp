@@ -1,5 +1,7 @@
 #include "window.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
 {
 	// Load from file
@@ -110,7 +112,7 @@ Window::Window() : style(ImGui::GetStyle())
 		
 		imageWidth = 0, imageHeight = 0;
 		animalTypes[0] = "\tWolf", animalTypes[1] = "\tRabbit";
-		animalFiles[0] = "EnvSim GUI\\images\\wolf.png", animalFiles[1] = "temp";
+		animalFiles[0] = "EnvSim GUI\\images\\wolf.png", animalFiles[1] = "EnvSim GUI\\images\\wolf.png";
 		LoadTextureFromFile(animalFiles[0], &animalTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(animalFiles[1], &animalTextures[1], &imageWidth, &imageHeight);
 		animalColors[0] = IM_COL32(0, 0, 0, 0), animalColors[1] = IM_COL32(0, 0, 0, 0);
@@ -118,7 +120,7 @@ Window::Window() : style(ImGui::GetStyle())
 		animalIndex = 0;
 
 		filterTypes[0] = "\tVegetation", filterTypes[1] = "\tPrey Density", filterTypes[2] = "\tHuman Population";
-		filterFiles[0] = "temp", filterFiles[1] = "temp", filterFiles[2] = "temp";
+		filterFiles[0] = "EnvSim GUI\\images\\wolf.png", filterFiles[1] = "EnvSim GUI\\images\\wolf.png", filterFiles[2] = "EnvSim GUI\\images\\wolf.png";
 		LoadTextureFromFile(filterFiles[0], &filterTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[1], &filterTextures[1], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[2], &filterTextures[2], &imageWidth, &imageHeight);
@@ -179,6 +181,14 @@ void Window::RunWindow()
 			RenderWindow();
 			glfwSwapBuffers(window);
 			glfwPollEvents();
+		}
+
+		if (years.at(currYear).cells != nullptr)
+		{
+			for (auto& year : years)
+			{
+				delete[] year.second.cells;
+			}
 		}
 
 		ImGui_ImplOpenGL3_Shutdown();

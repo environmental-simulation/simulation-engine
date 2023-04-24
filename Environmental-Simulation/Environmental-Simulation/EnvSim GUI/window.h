@@ -4,7 +4,6 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include "imgui/stb_image.h"
 
 #include <iostream>
 #include <GLFW/glfw3.h>
@@ -13,10 +12,7 @@
 #include <string>
 #include <unordered_map>
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height); // Used to load images from file
-#endif
 
 extern bool leftMousePressed, titleBarHovered;
 extern int cursorPosX, cursorPosY, offsetPosX, offsetPosY;
