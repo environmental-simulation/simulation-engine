@@ -1,9 +1,11 @@
 #include <Brain.h>
 #include <math.h>
+#include <iostream>
 
 Brain::Brain()
 {
-	net.read_net("./model/", "Network_File.nn")
+	net.read_net("./model/", "Network_File.nn");
+	last_prediction = std::vector<double>(2);
 }
 
 std::vector<double> Brain::compute_directional_inputs(const std::vector<std::vector<std::vector<double>>>& raw_inputs)
@@ -95,5 +97,12 @@ std::vector<double> Brain::predict(std::vector<std::vector<std::vector<double>>>
 
 	std::vector<double> prediction = {out(0, 0), out(1, 0)};
 
+	last_prediction = prediction;
+
 	return prediction;
+}
+
+void Brain::print_debug()
+{
+	std::cout << "Last prediction: [" << last_prediction(0, 0) << ", " << last_prediction(1, 0) << "]" << std::endl;
 }

@@ -1,4 +1,4 @@
-#include <MiniDNN.h>
+#include "include/MiniDNN.h"
 
 #include <string>
 #include <vector>
@@ -10,6 +10,7 @@ class Brain
 {
 private:
 	Network net;
+	std::vector<double> last_prediction;
 
 public:
 	Brain();
@@ -19,4 +20,7 @@ public:
 
 	// 'raw_inputs' should be a 3D vector of size 5x5x4, with values in range [0, 1].
 	std::vector<double> predict(std::vector<std::vector<std::vector<double>>> raw_inputs);
+
+	// Just for testing.
+	void print_debug();
 };
