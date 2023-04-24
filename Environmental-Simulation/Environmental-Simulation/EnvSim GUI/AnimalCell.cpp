@@ -268,6 +268,8 @@ AnimalCell* AnimalCell::Split()
 	delete cells;
 	cells = newCellArr;
 	UpdateCellCount();
+
+	return newCell;
 }
 
 void AnimalCell::Merge()
