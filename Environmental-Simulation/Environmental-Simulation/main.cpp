@@ -29,7 +29,7 @@ int main()
 	brain.print_debug();
 	
 	// Run Reacting Phase program
-	RunWindow();
+	//RunWindow();
 
 	return 0;
 }
