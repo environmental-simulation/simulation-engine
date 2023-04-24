@@ -31,6 +31,7 @@
     <ClCompile Include="EnvSim GUI\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EnvSim GUI\window.cpp" />
     <ClCompile Include="LearningPhase\AnimalModel.cpp" />
+    <ClCompile Include="LearningPhase\Brain.cpp" />
     <ClCompile Include="LearningPhase\openNN.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Simulation.cpp" />
@@ -51,6 +52,7 @@
     <ClInclude Include="EnvSim GUI\imgui\stb_image.h" />
     <ClInclude Include="EnvSim GUI\window.h" />
     <ClInclude Include="LearningPhase\AnimalModel.h" />
+    <ClInclude Include="LearningPhase\Brain.h" />
     <ClInclude Include="LearningPhase\ELP.h" />
     <ClInclude Include="LearningPhase\openNN.h" />
     <ClInclude Include="Simulation.h" />

@@ -104,5 +104,5 @@ std::vector<double> Brain::predict(std::vector<std::vector<std::vector<double>>>
 
 void Brain::print_debug()
 {
-	std::cout << "Last prediction: [" << last_prediction(0, 0) << ", " << last_prediction(1, 0) << "]" << std::endl;
+	std::cout << "Last prediction: [" << last_prediction[0] << ", " << last_prediction[1] << "]" << std::endl;
 }
