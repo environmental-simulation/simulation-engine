@@ -221,6 +221,31 @@ AnimalCell::AnimalCell(AnimalModel* m, Grid* map, int xCoord, int yCoord, Animal
 		cells = new AnimalCell*[1];
 	else
 		cells = new AnimalCell*[cellsLive];
+
+	for (int i = 0; i < cellCount; i++)
+	{
+		cells[i] = cellsAlive[i];
+	}
+	for (int i = 0; i < cellCount; i++)
+	{
+		delete cells[i]->cells;
+		cells[i]->cells = cells;
+		cells[i]->cellsLive++;
+	}
+}
+
+AnimalCell::AnimalCell(AnimalCell* copied)
+{
+	model = copied->model;
+	grid = copied->grid;
+
+	lon = copied->lon;
+	lat = copied->lat;
+	horVector = copied->horVector;
+	verVector = copied->verVector;
+	next = copied->next;
+	cells = nullptr;
+	cellsLive = copied->cellsLive;
 }
 
 void AnimalCell::Act()

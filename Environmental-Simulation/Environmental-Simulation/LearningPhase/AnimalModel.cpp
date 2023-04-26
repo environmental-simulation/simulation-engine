@@ -2,6 +2,7 @@
 *  Animal model that can learn from data and react in an alternate environment
 */
 #include "AnimalModel.h"
+#include <random>
 
 // Animal Model functions
 
@@ -14,34 +15,41 @@ AnimalModel::AnimalModel(char* inName, int size, int inSize, int r)
 	outputs = new double[Outputs];
 	range = r;
 	hNodes = new node*[NODE_LAYER_COUNT];
+
 	for (int i = 0; i < NODE_LAYER_COUNT; i++)
 	{
 		hNodes[i] = new node[NODE_COUNT_PER_LAYER];
 		hNodes[i]->values = 0;
-		// todo:Set bias or othersuch
 	}
 	weights = new double**[NODE_LAYER_COUNT + 2];
 	weights[0] = new double*[inputSize];
 	for (int i = 0; i < inputSize; i++)
 	{
 		weights[0][i] = new double[NODE_COUNT_PER_LAYER];
-		// todo:random value added dependent on seed
 	}
 	for (int i = 0; i < NODE_LAYER_COUNT; i++)
 	{
-		weights[i + 1] = new double* [NODE_COUNT_PER_LAYER];
+		weights[i + 1] = new double*[NODE_COUNT_PER_LAYER];
 
 		for (int j = 0; j < NODE_COUNT_PER_LAYER; j++)
 		{
 			weights[i + 1][j] = new double[NODE_COUNT_PER_LAYER];
-			// todo:random value added dependent on seed
+			
+			for (int k = 0; k < NODE_COUNT_PER_LAYER; k++)
+			{
+				weights[i + 1][j][k] = 1. / rand(); // Assigns a random weight
+			}
 		}
 	}
 	weights[NODE_LAYER_COUNT + 1] = new double*[NODE_COUNT_PER_LAYER];
 	for (int i = 0; i < NODE_COUNT_PER_LAYER; i++)
 	{
 		weights[NODE_LAYER_COUNT + 1][i] = new double[Outputs];
-		// todo:random value added dependent on seed
+		
+		for (int j = 0; j < Outputs; j++)
+		{
+			weights[NODE_LAYER_COUNT + 1][i][j] = 1. / rand();
+		}
 	}
 }
 
