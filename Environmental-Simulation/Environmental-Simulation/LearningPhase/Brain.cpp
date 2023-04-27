@@ -4,7 +4,7 @@
 
 Brain::Brain()
 {
-	net.read_net("./model/", "Network_File.nn");
+	net.read_net("./model", "Network_File.nn");
 	last_prediction = std::vector<double>(2);
 }
 
