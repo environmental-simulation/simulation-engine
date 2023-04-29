@@ -9,6 +9,7 @@
 #include <vector>    // std::vector
 #include <stdexcept> // std::runtime_error, std::invalid_argument
 #include <cstdlib>   // atoi
+#include <iostream>
 
 #ifdef _WIN32
     #include <direct.h>     // _mkdir
