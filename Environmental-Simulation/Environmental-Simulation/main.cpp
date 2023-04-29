@@ -9,7 +9,7 @@ int main()
 {
 	// Run Learning Phase program
 	//RunNN();
-	Brain brain = Brain();
+	/*Brain brain = Brain();
 
 	std::vector<std::vector<std::vector<double>>> test_input(5, std::vector<std::vector<double>>(5, std::vector<double>(4)));
 
@@ -26,10 +26,10 @@ int main()
 
 	brain.predict(test_input);
 
-	brain.print_debug();
+	brain.print_debug();*/
 	
 	// Run Reacting Phase program
-	//RunWindow();
+	Window window = Window();
 
 	return 0;
 }

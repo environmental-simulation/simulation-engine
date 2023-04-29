@@ -94,7 +94,7 @@ Year::Year(int seasonCount, int cellCount)
 	}
 }
 
-Window::Window() : style(ImGui::GetStyle())
+Window::Window()
 {
 	InitGLFW();
 	winWidth = 2000, winHeight = 1200;
@@ -109,22 +109,24 @@ Window::Window() : style(ImGui::GetStyle())
 		glfwMakeContextCurrent(window);
 		gladLoadGL();
 		InitImGui();
+		ImGuiStyle& style = ImGui::GetStyle();
+
 		
 		imageWidth = 0, imageHeight = 0;
 		animalTypes[0] = "\tWolf", animalTypes[1] = "\tRabbit";
-		animalFiles[0] = "EnvSim GUI\\images\\wolf.png", animalFiles[1] = "EnvSim GUI\\images\\wolf.png";
+		animalFiles[0] = "EnvSim GUI\\images\\wolf.png", animalFiles[1] = "EnvSim GUI\\images\\rabbit.png";
 		LoadTextureFromFile(animalFiles[0], &animalTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(animalFiles[1], &animalTextures[1], &imageWidth, &imageHeight);
-		animalColors[0] = IM_COL32(0, 0, 0, 0), animalColors[1] = IM_COL32(0, 0, 0, 0);
-		activeAnimals[0] = true, activeAnimals[1] = false;
+		animalColors[0] = IM_COL32(255, 0, 0, 200), animalColors[1] = IM_COL32(0, 0, 255, 170);
+		activeAnimals[0] = true, activeAnimals[1] = true;
 		animalIndex = 0;
 
 		filterTypes[0] = "\tVegetation", filterTypes[1] = "\tPrey Density", filterTypes[2] = "\tHuman Population";
-		filterFiles[0] = "EnvSim GUI\\images\\wolf.png", filterFiles[1] = "EnvSim GUI\\images\\wolf.png", filterFiles[2] = "EnvSim GUI\\images\\wolf.png";
+		filterFiles[0] = "EnvSim GUI\\images\\vegetation.jpeg", filterFiles[1] = "EnvSim GUI\\images\\prey.png", filterFiles[2] = "EnvSim GUI\\images\\human.png";
 		LoadTextureFromFile(filterFiles[0], &filterTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[1], &filterTextures[1], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[2], &filterTextures[2], &imageWidth, &imageHeight);
-		filterColors[0] = IM_COL32(0, 0, 0, 0), filterColors[1] = IM_COL32(0, 0, 0, 0), filterColors[2] = IM_COL32(0, 0, 0, 0);
+		filterColors[0] = IM_COL32(0, 255, 0, 120), filterColors[1] = IM_COL32(115, 0, 255, 100), filterColors[2] = IM_COL32(255, 0, 251, 80);
 		activeFilters[0] = false, activeFilters[1] = false, activeFilters[2] = false;
 
 		windowRunning = true, simRunning = false;
@@ -137,18 +139,20 @@ Window::Window() : style(ImGui::GetStyle())
 		gridSizeText[0] = "100x100";
 		cellCounts[0] = 10000;
 		sizeIndex = 0;
-		cellColor = IM_COL32(6, 188, 0, 255);
+		cellColor = IM_COL32(49, 77, 57, 255);
 		
 		tableSizeX = 1140, tableSizeY = 860;
 		framePadding = style.FramePadding;
-		Colors();
+		Colors(style);
 		SetYears();
-		SetGridSize(cellCounts[sizeIndex]);
+		SetGridSize(cellCounts[sizeIndex], style);
+		RunWindow(style);
 	}
 }
 
-void Window::RunWindow()
+void Window::RunWindow(ImGuiStyle& style)
 {
+
 	if (window != NULL)
 	{
 		while (!glfwWindowShouldClose(window))
@@ -165,18 +169,18 @@ void Window::RunWindow()
 				if (!windowRunning) glfwSetWindowShouldClose(window, GLFW_TRUE);
 				titleBarHovered = true;
 			}
-			CreateMenuBar();
+			CreateMenuBar(style);
 			ImGui::SetCursorPos(ImVec2(10, 50));
-			CreateUpperLeftPanel();
+			CreateUpperLeftPanel(style);
 			ImGui::SetCursorPos(ImVec2(10, 800));
-			CreateLowerLeftPanel();
+			CreateLowerLeftPanel(style);
 			ImGuiTableFlags tableFlags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
 			ImGui::SetCursorPos(ImVec2(420, 50));
-			CreateMidPanel(tableFlags);
+			CreateMidPanel(tableFlags, style);
 			ImGui::SetCursorPos(ImVec2(420, 940));
-			CreateLowerPanel();
+			CreateLowerPanel(style);
 			ImGui::SetCursorPos(ImVec2(1590, 50));
-			CreateRightPanel();
+			CreateRightPanel(style);
 			ImGui::End();
 			RenderWindow();
 			glfwSwapBuffers(window);
@@ -235,7 +239,7 @@ void Window::InitImGui()
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void Window::Colors()
+void Window::Colors(ImGuiStyle& style)
 {
 	style.Colors[ImGuiCol_WindowBg] = ImColor(83, 83, 83);
 	style.Colors[ImGuiCol_ChildBg] = ImColor(37, 36, 42);
@@ -254,7 +258,7 @@ void Window::SetYears()
 	}
 }
 
-void Window::SetGridSize(int cellCount)
+void Window::SetGridSize(int cellCount, ImGuiStyle& style)
 {
 	int seasonCount = sizeof(seasons) / sizeof(const char*);
 
@@ -332,7 +336,7 @@ ImVec2 Window::SetItemDimensions(int w, int h)
 	return fPadding;
 }
 
-void Window::CreateMenuBar()
+void Window::CreateMenuBar(ImGuiStyle& style)
 {
 	if (ImGui::BeginMenuBar())
 	{
@@ -361,7 +365,7 @@ void Window::CreateMenuBar()
 				if (ImGui::MenuItem("End Simulation"))
 				{
 					simRunning = false;
-					SetGridSize(cellCounts[sizeIndex]);
+					SetGridSize(cellCounts[sizeIndex], style);
 					ResetWindow();
 				}
 
@@ -372,7 +376,7 @@ void Window::CreateMenuBar()
 	}
 }
 
-void Window::CreateUpperLeftPanel()
+void Window::CreateUpperLeftPanel(ImGuiStyle& style)
 {
 	ImGui::BeginChild("Upper Left Panel", ImVec2(400, 740));
 	{
@@ -415,7 +419,7 @@ void Window::CreateUpperLeftPanel()
 	ImGui::EndChild();
 }
 
-void Window::CreateLowerLeftPanel()
+void Window::CreateLowerLeftPanel(ImGuiStyle& style)
 {
 	ImGui::BeginChild("Lower Left Panel", ImVec2(400, 390));
 	{
@@ -434,7 +438,7 @@ void Window::CreateLowerLeftPanel()
 		else if (!simRunning && temp != sizeIndex)
 		{
 			ResetWindow();
-			SetGridSize(cellCounts[sizeIndex]);
+			SetGridSize(cellCounts[sizeIndex], style);
 		}
 
 		ImGui::SetCursorPos(ImVec2(10, 80));
@@ -443,7 +447,7 @@ void Window::CreateLowerLeftPanel()
 	ImGui::EndChild();
 }
 
-void Window::CreateMidPanel(ImGuiTableFlags flags)
+void Window::CreateMidPanel(ImGuiTableFlags flags, ImGuiStyle& style)
 {
 	ImGui::BeginChild("Mid Panel", ImVec2(1160, 880));
 	{
@@ -473,13 +477,13 @@ void Window::CreateMidPanel(ImGuiTableFlags flags)
 				}
 				ImGui::PopStyleColor();
 
-				/*if (!ImGui::IsItemHovered() && !cells[i].selected)
+				if (!ImGui::IsItemHovered() && !currCell.animalPresent)
 				{
 					drawList->ChannelsSetCurrent(0);
 					ImVec2 posMin = ImGui::GetItemRectMin();
 					ImVec2 posMax = ImGui::GetItemRectMax();
-					ImGui::GetWindowDrawList()->AddRectFilled(posMin, posMax, IM_COL32(grassCellCol[0], grassCellCol[1], grassCellCol[2], 255));
-				}*/
+					ImGui::GetWindowDrawList()->AddRectFilled(posMin, posMax, cellColor);
+				}
 				if (!simRunning && currYear != minYear && ImGui::IsItemHovered())
 				{
 					ImGui::SetTooltip("Animals Must Be Placed In Year 1");
@@ -522,7 +526,7 @@ void Window::CreateMidPanel(ImGuiTableFlags flags)
 	ImGui::EndChild();
 }
 
-void Window::CreateLowerPanel()
+void Window::CreateLowerPanel(ImGuiStyle& style)
 {
 	ImGui::BeginChild("Lower Panel", ImVec2(1160, 250));
 	{
@@ -545,7 +549,7 @@ void Window::CreateLowerPanel()
 	ImGui::EndChild();
 }
 
-void Window::CreateRightPanel()
+void Window::CreateRightPanel(ImGuiStyle& style)
 {
 	ImGui::SetCursorPos(ImVec2(1590, 50));
 	ImGui::BeginChild("Right Panel", ImVec2(400, 1140));
@@ -570,10 +574,10 @@ void Window::CreateRightPanel()
 
 void Window::ResetWindow()
 {
-	activeAnimals[0] = true, activeAnimals[1] = false;
+	activeAnimals[0] = true, activeAnimals[1] = true;
 	animalIndex = 0;
 
-	activeFilters[0] = false, activeFilters[1] = false, activeFilters[2] = false;
+	activeFilters[0] = true, activeFilters[1] = true, activeFilters[2] = true;
 
 	currYear = 1;
 	seasonIndex = 0;

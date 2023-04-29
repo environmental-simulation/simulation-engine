@@ -43,10 +43,10 @@ class Window
 {
 public:
 	Window(); // Initializes all variables and creates the window
-	void RunWindow(); // Runs the window and handles window function
+	void RunWindow(ImGuiStyle& style); // Runs the window and handles window function
 	// Receives output data from simulation
 	// Will only work if the grid is a perfect square and the array passed has the same number of rows/cols
-	void SetData(int year, int season, CellData** data); 
+	void SetData(int year, int season, CellData** data);
 private:
 	int winWidth, winHeight;
 	GLFWwindow* window;
@@ -66,7 +66,6 @@ private:
 	int animalIndex;
 	const char* seasons[2];
 	int seasonIndex;
-	ImGuiStyle& style;
 	ImVec2 framePadding;
 	const char* animalFiles[2];
 	const char* filterFiles[3];
@@ -78,19 +77,19 @@ private:
 	
 	void InitGLFW(); // Initializes GLFW
 	void InitImGui(); // Initializes ImGui
-	void Colors(); // Setting UI colors and cell padding
+	void Colors(ImGuiStyle& style); // Setting UI colors and cell padding
 	void SetYears(); // Initializes the years unordered_map. at the moment this only works if years increment by 1
-	void SetGridSize(int cellCount); // Can be used to set the grid size or clear the grid by reseting all CellData bools to false
+	void SetGridSize(int cellCount, ImGuiStyle& style); // Can be used to set the grid size or clear the grid by reseting all CellData bools to false
 	void StartFrame(); // Starts ImGui frame
 	void MoveWindow(); // Moves window by mouse drag
 	void RunSim(); // Sends input data and runs the simulation
 	ImVec2 SetItemDimensions(int w, int h); // Helps set the dimensions of UI items like checkboxes and sliders
-	void CreateMenuBar(); // Creates menu bar
-	void CreateUpperLeftPanel(); // Creates upper left panel and items
-	void CreateLowerLeftPanel(); // Creates lower left panel and items
-	void CreateMidPanel(ImGuiTableFlags flags); // Creates mid panel and items
-	void CreateLowerPanel(); // Creates lower panel and items
-	void CreateRightPanel(); // Creates right panel and items
+	void CreateMenuBar(ImGuiStyle& style); // Creates menu bar
+	void CreateUpperLeftPanel(ImGuiStyle& style); // Creates upper left panel and items
+	void CreateLowerLeftPanel(ImGuiStyle& style); // Creates lower left panel and items
+	void CreateMidPanel(ImGuiTableFlags flags, ImGuiStyle& style); // Creates mid panel and items
+	void CreateLowerPanel(ImGuiStyle& style); // Creates lower panel and items
+	void CreateRightPanel(ImGuiStyle& style); // Creates right panel and items
 	void ResetWindow(); // Resets window filters and sliders to default values
 	void PlaceAnimal(int index); // Allows the user to place an animal at a certain grid cell
 	void RenderWindow(); // Rendering the window
