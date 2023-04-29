@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "../Simulation.h"
 
 #include <iostream>
 #include <GLFW/glfw3.h>
@@ -23,12 +24,13 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods); 
 struct CellData
 {
 public:
-	bool wolfPresent;
-	bool rabbitPresent;
-	bool vegetationPresent;
-	bool preyPresent;
-	bool humanPresent;
-	bool animalPresent;
+	bool* animalPresent;
+	//bool wolfPresent = false;
+	//bool rabbitPresent = false;
+	bool vegetationPresent = false;
+	bool preyPresent = false;
+	bool humanPresent = false;
+	bool cellPresent = false;
 };
 
 class Year
@@ -62,6 +64,7 @@ private:
 	bool activeAnimals[2];
 	bool activeFilters[3];
 	const char* animalTypes[2];
+	int animalCounts[2];
 	const char* filterTypes[3];
 	int animalIndex;
 	const char* seasons[2];
@@ -74,7 +77,10 @@ private:
 	GLuint filterTextures[3];
 	ImU32 animalColors[2];
 	ImU32 filterColors[3];
-	
+	const char* cellTypes[5];
+	int cellIndex;
+	AnimalModel* animalModels[2];
+
 	void InitGLFW(); // Initializes GLFW
 	void InitImGui(); // Initializes ImGui
 	void Colors(ImGuiStyle& style); // Setting UI colors and cell padding

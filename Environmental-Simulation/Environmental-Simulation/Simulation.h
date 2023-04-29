@@ -104,7 +104,7 @@ public:
 
 	AnimalCell* GetCell(int animalIdx, int cellIdx);	// Returns cell pointer of the specific species and cell
 
-	void AddCells(int idx, int amount);					// Adds 'amount' cells of animal in animals['idx'] to the simulation at the START ONLY
+	void AddCells(int idx, int amount, int* xCoords, int* yCoords);					// Adds 'amount' cells of animal in animals['idx'] to the simulation at the START ONLY
 
 	void SetFrame(int year, bool season);				// Saves the CURRENT set of cells as a frame to analyze later
 	

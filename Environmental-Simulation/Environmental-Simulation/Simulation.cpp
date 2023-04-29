@@ -182,7 +182,7 @@ AnimalCell* Simulation::GetCell(int animalIdx, int cellIdx)
 	return animals[animalIdx][cellIdx];
 }
 
-void Simulation::AddCells(int idx, int amount)
+void Simulation::AddCells(int idx, int amount, int* xCoords, int* yCoords)
 {
 	if (animalCount <= idx)
 		return;
@@ -199,8 +199,8 @@ void Simulation::AddCells(int idx, int amount)
 		newCells[cellCount[idx] + i] = new AnimalCell(
 			models[idx],
 			grid,
-			rand() % grid->xSize,
-			rand() % grid->ySize,
+			xCoords[i],
+			yCoords[i],
 			animals[idx],
 			cellCount[idx] + i);
 		

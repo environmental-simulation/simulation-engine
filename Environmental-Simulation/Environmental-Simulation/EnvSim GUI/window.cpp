@@ -84,12 +84,13 @@ Year::Year(int seasonCount, int cellCount)
 		cells[i] = new CellData[cellCount];
 		for (int j = 0; j < cellCount; j++)
 		{
-			cells[i][j].wolfPresent = false;
-			cells[i][j].rabbitPresent = false;
+			cells[i][j].animalPresent = new bool[2];
+			cells[i][j].animalPresent[0] = false; // Wolf
+			cells[i][j].animalPresent[1] = false; // Rabbit
 			cells[i][j].vegetationPresent = false;
 			cells[i][j].preyPresent = false;
 			cells[i][j].humanPresent = false;
-			cells[i][j].animalPresent = false;
+			cells[i][j].cellPresent = false;
 		}
 	}
 }
@@ -113,21 +114,37 @@ Window::Window()
 
 		
 		imageWidth = 0, imageHeight = 0;
+
+		// =setting up animal visuals and arrays
 		animalTypes[0] = "\tWolf", animalTypes[1] = "\tRabbit";
+		animalCounts[0] = 0, animalCounts[1] = 0;
 		animalFiles[0] = "EnvSim GUI\\images\\wolf.png", animalFiles[1] = "EnvSim GUI\\images\\rabbit.png";
 		LoadTextureFromFile(animalFiles[0], &animalTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(animalFiles[1], &animalTextures[1], &imageWidth, &imageHeight);
 		animalColors[0] = IM_COL32(255, 0, 0, 200), animalColors[1] = IM_COL32(0, 0, 255, 170);
 		activeAnimals[0] = true, activeAnimals[1] = true;
-		animalIndex = 0;
+		//animalIndex = 0;
 
+		// used for showing and hiding filters/layers
 		filterTypes[0] = "\tVegetation", filterTypes[1] = "\tPrey Density", filterTypes[2] = "\tHuman Population";
-		filterFiles[0] = "EnvSim GUI\\images\\vegetation.jpeg", filterFiles[1] = "EnvSim GUI\\images\\prey.png", filterFiles[2] = "EnvSim GUI\\images\\human.png";
+		filterFiles[0] = "EnvSim GUI\\images\\vegetation.png", filterFiles[1] = "EnvSim GUI\\images\\prey.jpg", filterFiles[2] = "EnvSim GUI\\images\\human.png";
 		LoadTextureFromFile(filterFiles[0], &filterTextures[0], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[1], &filterTextures[1], &imageWidth, &imageHeight);
 		LoadTextureFromFile(filterFiles[2], &filterTextures[2], &imageWidth, &imageHeight);
-		filterColors[0] = IM_COL32(0, 255, 0, 120), filterColors[1] = IM_COL32(115, 0, 255, 100), filterColors[2] = IM_COL32(255, 0, 251, 80);
-		activeFilters[0] = false, activeFilters[1] = false, activeFilters[2] = false;
+		filterColors[0] = IM_COL32(0, 255, 0, 100), filterColors[1] = IM_COL32(235, 204, 52, 80), filterColors[2] = IM_COL32(255, 0, 251, 60);
+		activeFilters[0] = true, activeFilters[1] = true, activeFilters[2] = true;
+
+		// used for placing cells on the grid
+		cellTypes[0] = "Wolf Cell", cellTypes[1] = "Rabbit Cell", cellTypes[2] = "Vegetation", cellTypes[3] = "Prey", cellTypes[4] = "Human";
+		cellIndex = 0;
+
+		
+		// environmental filter count * 4 + 4
+		int inSize = 3 * 4 + 4;
+
+		// creating animal models
+		animalModels[0] = new AnimalModel((char*)"wolf", 4, inSize, 5);
+		animalModels[1] = new AnimalModel((char*)"rabbit", 6, inSize, 5);
 
 		windowRunning = true, simRunning = false;
 		leftMousePressed = false, titleBarHovered = false;
@@ -152,7 +169,6 @@ Window::Window()
 
 void Window::RunWindow(ImGuiStyle& style)
 {
-
 	if (window != NULL)
 	{
 		while (!glfwWindowShouldClose(window))
@@ -316,15 +332,94 @@ void Window::MoveWindow()
 void Window::RunSim()
 {
 	int size = sqrt(cellCounts[sizeIndex]);
+
+	// initializing layers using the Layer class in Environment.h and EnvironmentLayer struct in Simulation.h
+	Layer vegLayer, preyLayer, humanLayer;
+	EnvironmentLayer *vegEnvLayer = new EnvironmentLayer, *preyEnvLayer = new EnvironmentLayer, *humanEnvLayer = new EnvironmentLayer;
+
+	vegLayer.name = (char*)"vegetation", preyLayer.name = (char*)"prey", humanLayer.name = (char*)"human";
+	vegEnvLayer->name = (char*)"vegetation", preyEnvLayer->name = (char*)"prey", humanEnvLayer->name = (char*)"human";
+
+	vegLayer.len = 10, preyLayer.len = 4, humanLayer.len = 5;
+
+	vegLayer.xSize = size, preyLayer.xSize = size, humanLayer.xSize = size;
+	vegEnvLayer->xSize = size, preyEnvLayer->xSize = size, humanEnvLayer->xSize = size;
+
+	vegLayer.ySize = size, preyLayer.ySize, humanLayer.ySize = size;
+	vegEnvLayer->ySize = size, preyEnvLayer->ySize, humanEnvLayer->ySize = size;
+
 	int index = 0;
-	CellData** inputData = new CellData * [size];
+	vegLayer.layer = new double* [size], preyLayer.layer = new double* [size], humanLayer.layer = new double* [size];
+	vegEnvLayer->grid = new double* [size], preyEnvLayer->grid = new double* [size], humanEnvLayer->grid = new double* [size];
+
 	for (int i = 0; i < size; i++)
 	{
-		inputData[i] = new CellData[size];
+		vegLayer.layer[i] = new double[size], preyLayer.layer[i] = new double[size], humanLayer.layer[i] = new double[size];
+		vegEnvLayer->grid[i] = new double[size], preyEnvLayer->grid[i] = new double[size], humanEnvLayer->grid[i] = new double[size];
+
 		for (int j = 0; j < size; j++)
 		{
-			inputData[i][j] = years.at(minYear).cells[0][index];
+			vegLayer.layer[i][j] = (double)years.at(minYear).cells[0][index].vegetationPresent;
+			vegEnvLayer->grid[i][j] = (double)years.at(minYear).cells[0][index].vegetationPresent;
+
+			preyLayer.layer[i][j] = (double)years.at(minYear).cells[0][index].preyPresent;
+			preyEnvLayer->grid[i][j] = (double)years.at(minYear).cells[0][index].preyPresent;
+
+			humanLayer.layer[i][j] = (double)years.at(minYear).cells[0][index].humanPresent;
+			humanEnvLayer->grid[i][j] = (double)years.at(minYear).cells[0][index].humanPresent;
+
 			index++;
+		}
+	}
+
+	// haven't added mute functionality yet, only the ability to show and hide filters
+	vegLayer.muted = false, preyLayer.muted = false, humanLayer.muted = false;
+
+	// initializing grid
+	Grid* grid = new Grid;
+	grid->xSize = size, grid->ySize = size;
+	grid->speciesCount = 2;
+	grid->cellCount = new int[2] { animalCounts[0], animalCounts[1] };
+	grid->name = (char*)"Test";
+	grid->len = 4;
+	grid->layers = new Layer[3]{ vegLayer, preyLayer, humanLayer };
+
+	// initializing simulation and adding animals and layers
+	Simulation sim = Simulation(grid, maxYear);
+	sim.AddAnimal(animalModels[0]);
+	sim.AddAnimal(animalModels[1]);
+	sim.AddLayer(vegEnvLayer);
+	sim.AddLayer(preyEnvLayer);
+	sim.AddLayer(humanEnvLayer);
+
+	// getting coordinates for the all cells placed for each animal
+	for (int i = 0; i < 2; i++)
+	{
+		if (animalCounts[i] > 0)
+		{
+			int* xCoords = new int[animalCounts[i]];
+			int* yCoords = new int[animalCounts[i]];
+			int idx = 0;
+
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (years.at(minYear).cells[j][k].animalPresent[i])
+					{
+						xCoords[idx] = j;
+						yCoords[idx] = k;
+						idx++;
+					}
+				}
+
+				if (idx == animalCounts[i])
+				{
+					break;
+				}
+			}
+
+			sim.AddCells(i, 4, xCoords, yCoords);
 		}
 	}
 }
@@ -442,7 +537,7 @@ void Window::CreateLowerLeftPanel(ImGuiStyle& style)
 		}
 
 		ImGui::SetCursorPos(ImVec2(10, 80));
-		ImGui::Combo("Animal Cell", &animalIndex, animalTypes, 2);
+		ImGui::Combo("Cell Types", &cellIndex, cellTypes, 5);
 	}
 	ImGui::EndChild();
 }
@@ -468,7 +563,7 @@ void Window::CreateMidPanel(ImGuiTableFlags flags, ImGuiStyle& style)
 				drawList->ChannelsSetCurrent(1);
 				ImGui::PushStyleColor(ImGuiCol_Header, cellColor);
 				CellData currCell = years.at(currYear).cells[seasonIndex][i];
-				if(ImGui::Selectable(std::to_string(i).c_str(), currCell.animalPresent, 0, ImVec2(curCellSize, curCellSize)))
+				if(ImGui::Selectable(std::to_string(i).c_str(), currCell.cellPresent, 0, ImVec2(curCellSize, curCellSize)))
 				{
 					if (!simRunning && currYear == minYear)
 					{
@@ -477,7 +572,7 @@ void Window::CreateMidPanel(ImGuiTableFlags flags, ImGuiStyle& style)
 				}
 				ImGui::PopStyleColor();
 
-				if (!ImGui::IsItemHovered() && !currCell.animalPresent)
+				if (!ImGui::IsItemHovered() && !currCell.cellPresent)
 				{
 					drawList->ChannelsSetCurrent(0);
 					ImVec2 posMin = ImGui::GetItemRectMin();
@@ -491,12 +586,12 @@ void Window::CreateMidPanel(ImGuiTableFlags flags, ImGuiStyle& style)
 				
 				drawList->ChannelsSetCurrent(2);
 
-				if (currCell.wolfPresent && activeAnimals[0])
+				if (currCell.animalPresent[0] && activeAnimals[0])
 				{
 					drawList->AddImage((void*)(intptr_t)animalTextures[0], ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), animalColors[0]);
 				}
 
-				if (currCell.rabbitPresent && activeAnimals[1])
+				if (currCell.animalPresent[1] && activeAnimals[1])
 				{
 					drawList->AddImage((void*)(intptr_t)animalTextures[1], ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), animalColors[1]);
 				}
@@ -575,30 +670,56 @@ void Window::CreateRightPanel(ImGuiStyle& style)
 void Window::ResetWindow()
 {
 	activeAnimals[0] = true, activeAnimals[1] = true;
+	animalCounts[0] = 0, animalCounts[1] = 0;
 	animalIndex = 0;
 
 	activeFilters[0] = true, activeFilters[1] = true, activeFilters[2] = true;
 
 	currYear = 1;
 	seasonIndex = 0;
+
+	cellIndex = 0;
 }
 
 void Window::PlaceAnimal(int index)
 {
 	int seasonCount = sizeof(seasons) / sizeof(const char*);
 
-	if(animalIndex == 0)
+	if(cellIndex == 0 || cellIndex == 1)
 	{
 		for (int i = 0; i < seasonCount; i++)
 		{
-			years.at(currYear).cells[i][index].wolfPresent = !years.at(currYear).cells[i][index].wolfPresent;
+			years.at(currYear).cells[i][index].animalPresent[cellIndex] = !years.at(currYear).cells[i][index].animalPresent[cellIndex];
+
+			if (years.at(currYear).cells[i][index].animalPresent[cellIndex])
+			{
+				animalCounts[cellIndex]++;
+			}
+			else
+			{
+				animalCounts[cellIndex]--;
+			}
 		}
 	}
-	else if (animalIndex == 1)
+	else if (cellIndex == 2)
 	{
 		for (int i = 0; i < seasonCount; i++)
 		{
-			years.at(currYear).cells[i][index].rabbitPresent = !years.at(currYear).cells[i][index].rabbitPresent;
+			years.at(currYear).cells[i][index].vegetationPresent = !years.at(currYear).cells[i][index].vegetationPresent;
+		}
+	}
+	else if (cellIndex == 3)
+	{
+		for (int i = 0; i < seasonCount; i++)
+		{
+			years.at(currYear).cells[i][index].preyPresent = !years.at(currYear).cells[i][index].preyPresent;
+		}
+	}
+	else if (cellIndex == 4)
+	{
+		for (int i = 0; i < seasonCount; i++)
+		{
+			years.at(currYear).cells[i][index].humanPresent = !years.at(currYear).cells[i][index].humanPresent;
 		}
 	}
 }
